@@ -4,7 +4,7 @@ import { Link } from '@tanstack/react-router';
 function Home() {
 	return (
 		<Box className='flex flex-col items-center justify-center bg-gradient-to-r from-zinc-900 to-zinc-800' w='100%' h='100vh' p='lg' c='white'>
-			<Image alt='Hent logo' className='!w-[400px]' src='./public/enigma.png' />
+			<Image alt='Hent logo' className='!w-[400px]' src='./enigma.png' />
 
 			<Container>
 				<Title order={1} className='text-center text-white text-4xl' mb={8}>
