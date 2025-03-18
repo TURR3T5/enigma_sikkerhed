@@ -95,32 +95,33 @@ function LoginUnsafe() {
 				title: 'font-bold',
 				body: 'bg-red-900 p-4 text-white',
 			}}
+			size='sm'
 		>
-			<div className='mb-3 bg-black/40 p-3 rounded'>
-				<Text size='sm' fw='bold' mb={8} className='flex items-center'>
-					<ShieldSlash className='mr-2 text-red-400' weight='fill' />
+			<div className='mb-2 bg-black/40 p-2 rounded'>
+				<Text size='xs' fw='bold' mb={4} className='flex items-center'>
+					<ShieldSlash className='mr-1 text-red-400' weight='fill' />
 					Dette ville ske i en sårbar applikation:
 				</Text>
 
-				<div className='border border-red-500 p-3 text-center bg-black/30 rounded'>
-					<div className='text-yellow-300 font-mono mb-2 text-sm'>alert("XSS Attack!")</div>
-					<Badge color='red' size='lg'>
+				<div className='border border-red-500 p-2 text-center bg-black/30 rounded'>
+					<div className='text-yellow-300 font-mono mb-1 text-xs'>alert("XSS Attack!")</div>
+					<Badge color='red' size='sm'>
 						JavaScript kode er blevet udført!
 					</Badge>
 				</div>
 			</div>
 
-			<Title order={5} mb={8}>
+			<Title order={5} mb={4} size='sm'>
 				Hvorfor er dette farligt?
 			</Title>
-			<List size='sm' mb={12}>
+			<List size='xs' spacing='xs' mb={8}>
 				<List.Item>Angriberen kan stjæle brugerens cookies og session data</List.Item>
 				<List.Item>Angriberen kan omdirigere brugeren til ondsindet websted</List.Item>
-				<List.Item>Angriberen kan indsætte falske login-formularer for at stjæle legitimationsoplysninger</List.Item>
+				<List.Item>Angriberen kan indsætte falske login-formularer</List.Item>
 			</List>
 
-			<Text size='xs' fs='italic' mb={16}>
-				Bemærk: Moderne browsere og frameworks som React har beskyttelsesmekanismer mod XSS, hvilket er grunden til at du ser denne simulation i stedet for et virkeligt angreb.
+			<Text size='xs' fs='italic' mb={8}>
+				Bemærk: Moderne browsere og frameworks som React har beskyttelsesmekanismer mod XSS.
 			</Text>
 
 			<Button fullWidth color='red' onClick={() => setShowXssModal(false)}>
@@ -130,14 +131,14 @@ function LoginUnsafe() {
 	);
 
 	return (
-		<Box className='flex flex-col min-h-screen bg-gradient-to-r from-zinc-900 to-zinc-800' p='lg'>
+		<Box className='flex flex-col min-h-screen bg-gradient-to-r from-zinc-900 to-zinc-800' p='md'>
 			<Container size='xl' className='flex-grow flex flex-col justify-center'>
 				<Link to='/' className='text-white mb-4 flex items-center'>
 					<CaretLeft size={16} className='mr-2' /> Tilbage til forside
 				</Link>
 
-				<SimpleGrid cols={3} spacing='lg'>
-					<Paper withBorder p='lg' radius='md' className='bg-red-800/30 text-white'>
+				<SimpleGrid cols={3} spacing='md'>
+					<Paper withBorder p='md' radius='md' className='bg-red-800/30 text-white'>
 						<Title order={4} mb={16} className='flex items-center'>
 							<WarningOctagon size={20} className='mr-2 text-red-400' weight='fill' />
 							Sikkerhedsproblemer
@@ -192,13 +193,13 @@ function LoginUnsafe() {
 						</CodeBlock>
 					</Paper>
 
-					<Paper withBorder p='lg' radius='md' className='bg-red-800/20 text-white relative'>
-						<Title order={2} ta='center' mb={16} className='flex items-center justify-center'>
+					<Paper withBorder p='md' radius='md' className='bg-red-800/20 text-white relative'>
+						<Title order={2} ta='center' mb={8} className='flex items-center justify-center'>
 							<WarningOctagon size={28} className='mr-2 text-yellow-400' weight='fill' />
 							Usikker Login
 						</Title>
 
-						<Text size='sm' ta='center' mb={16}>
+						<Text size='sm' ta='center' mb={8}>
 							Denne side demonstrerer usikre login-metoder — brug aldrig disse i virkelige systemer!
 						</Text>
 
@@ -222,7 +223,7 @@ function LoginUnsafe() {
 									<PasswordInput label='Adgangskode' placeholder='Indtast adgangskode' required value={password} onChange={(e) => setPassword(e.target.value)} mb={16} />
 
 									{loginMessage && (
-										<Alert color={loginMessage.includes('not found') || loginMessage.includes('incorrect password') ? 'red' : 'green'} mb={16}>
+										<Alert color={loginMessage.includes('not found') || loginMessage.includes('Incorrect') ? 'red' : 'green'} mb={16}>
 											{loginMessage}
 										</Alert>
 									)}
@@ -316,7 +317,7 @@ Adgangskode: anything`}
 						</Text>
 					</Paper>
 
-					<Paper withBorder p='lg' radius='md' className='bg-red-800/30 text-white'>
+					<Paper withBorder p='md' radius='md' className='bg-red-800/30 text-white'>
 						<Title order={4} mb={16}>
 							Angrebsforklaringer
 						</Title>
