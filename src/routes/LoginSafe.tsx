@@ -44,20 +44,20 @@ function LoginSafe() {
 	};
 
 	return (
-		<Box className='flex flex-col min-h-screen bg-gradient-to-r from-zinc-900 to-zinc-800' p='lg'>
-			<Container size='xl' className='flex-grow flex flex-col justify-center'>
-				<Link to='/' className='text-white mb-4 flex items-center'>
+		<Box className='flex flex-col min-h-screen bg-gradient-to-r from-zinc-900 to-zinc-800' p='xl'>
+			<Container size='xl' className='flex-grow flex flex-col justify-center py-8'>
+				<Link to='/' className='text-white mb-6 flex items-center'>
 					<CaretLeft size={16} className='mr-2' /> Tilbage til forside
 				</Link>
 
-				<SimpleGrid cols={3} spacing='lg'>
-					<Paper withBorder p='lg' radius='md' className='bg-blue-800/30 text-white'>
-						<Title order={4} className='mb-4 flex items-center'>
+				<SimpleGrid cols={3} spacing='xl'>
+					<Paper withBorder p='xl' radius='md' className='bg-blue-800/30 text-white'>
+						<Title order={4} className='mb-5 flex items-center'>
 							<Shield size={20} className='mr-2 text-green-400' weight='fill' />
 							Sikkerhedsforanstaltninger
 						</Title>
 
-						<List spacing='xs' size='sm'>
+						<List spacing='md' size='sm'>
 							<List.Item>
 								<Badge color='green' variant='light' className='mr-2'>
 									CSRF-beskyttelse
@@ -92,78 +92,78 @@ function LoginSafe() {
 					</Paper>
 
 					<Paper withBorder p='xl' radius='md' className='bg-blue-800/20 text-white'>
-						<Title order={2} className='text-center mb-4 flex items-center justify-center'>
+						<Title order={2} className='text-center mb-5 flex items-center justify-center'>
 							<Shield size={28} className='mr-2 text-green-400' weight='fill' />
 							Sikker Login
 						</Title>
 
-						<Text size='sm' className='mb-4 text-center'>
+						<Text size='sm' className='mb-5 text-center'>
 							Denne side implementerer bedste praksis for login-sikkerhed
 						</Text>
 
-						<Divider my='md' />
+						<Divider my='lg' />
 
 						<form onSubmit={handleLogin}>
 							<input type='hidden' name='csrf_token' value={csrfToken} />
 
-							<TextInput label='Brugernavn' placeholder='Indtast dit brugernavn' required value={username} onChange={(e) => setUsername(e.target.value)} className='mb-3' />
+							<TextInput label='Brugernavn' placeholder='Indtast dit brugernavn' required value={username} onChange={(e) => setUsername(e.target.value)} className='mb-4' />
 
-							<PasswordInput label='Adgangskode' placeholder='Indtast din adgangskode' required value={password} onChange={(e) => setPassword(e.target.value)} className='mb-4' />
+							<PasswordInput label='Adgangskode' placeholder='Indtast din adgangskode' required value={password} onChange={(e) => setPassword(e.target.value)} className='mb-5' />
 
 							{successMessage && (
-								<Alert color='green' className='mb-4'>
+								<Alert color='green' className='mb-5'>
 									{successMessage}
 								</Alert>
 							)}
 
 							{errorMessage && (
-								<Alert color='red' icon={<WarningCircle weight='fill' />} className='mb-4'>
+								<Alert color='red' icon={<WarningCircle weight='fill' />} className='mb-5'>
 									{errorMessage}
 								</Alert>
 							)}
 
 							{isRateLimited && (
-								<Alert color='yellow' icon={<WarningCircle weight='fill' />} className='mb-4'>
+								<Alert color='yellow' icon={<WarningCircle weight='fill' />} className='mb-5'>
 									Kontoen er midlertidigt låst på grund af for mange loginforsøg.
 								</Alert>
 							)}
 
-							<Button type='submit' fullWidth color='green' disabled={isRateLimited}>
+							<Button type='submit' fullWidth color='green' disabled={isRateLimited} size='md'>
 								Log ind
 							</Button>
 						</form>
 
-						<Text size='xs' className='text-center mt-4 text-blue-300'>
+						<Text size='xs' className='text-center mt-5 text-blue-300'>
 							*Prøv at logge ind med brugernavn "admin" og adgangskode "secure123"
 						</Text>
 					</Paper>
 
-					<Paper withBorder p='lg' radius='md' className='bg-blue-800/30 text-white'>
-						<Title order={4} className='mb-4'>
+					<Paper withBorder p='xl' radius='md' className='bg-blue-800/30 text-white'>
+						<Title order={4} className='mb-5'>
 							Historisk kontekst
 						</Title>
 
-						<Text size='sm' className='mb-3'>
+						<Text size='sm' className='mb-4'>
 							Sikker login-teknologi har sine rødder i krypteringsmetoder som blev brugt under 2. Verdenskrig.
 						</Text>
 
-						<Text size='sm' className='mb-3'>
+						<Text size='sm' className='mb-4'>
 							Enigma-maskinen repræsenterede et tidligt forsøg på at skabe sikker kommunikation, men var sårbar på grund af gentagne mønstre og menneskelige fejl.
 						</Text>
 
-						<Text size='sm' className='mb-3'>
+						<Text size='sm' className='mb-4'>
 							Moderne teknikker som password-hashing, salting og beskyttelse mod angreb er udviklinger af de grundlæggende principper fra denne tid.
 						</Text>
 
-						<Divider my='md' />
+						<Divider my='lg' />
 
-						<Title order={5} className='mb-2'>
+						<Title order={5} className='mb-3'>
 							Test for XSS-beskyttelse:
 						</Title>
-						<Text size='xs' color='dimmed' className='mb-2'>
+						<Text size='xs' color='dimmed' className='mb-3'>
 							Prøv at bruge følgende som brugernavn for at teste XSS-beskyttelsen:
 						</Text>
-						<Code block className='text-xs bg-blue-950 overflow-x-auto p-2 mb-2 border border-blue-500 rounded'>
+						<Code block className='text-xs bg-blue-950 overflow-x-auto p-3 mb-3 border border-blue-500 rounded'>
 							{'<img src="x" onerror="alert(\'XSS Attack!\')">'}
 						</Code>
 						<Text size='xs' color='dimmed'>
