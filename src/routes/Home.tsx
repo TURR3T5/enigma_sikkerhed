@@ -7,15 +7,15 @@ function Home() {
 			<Image alt='Hent logo' className='!w-[400px]' src='./enigma.png' />
 
 			<Container>
-				<Title order={1} className='text-center text-white text-4xl' mb={8}>
+				<Title order={1} ta='center' c='white' size='h1' mb={8}>
 					Velkommen til Enigmas Login Sikkerhed
 				</Title>
 
-				<Text ta='center' className='text-white text-lg' mb={8}>
+				<Text ta='center' size='lg' c='white' mb={8}>
 					Vælg en af de to login sider for at se forskellen på en sikker og en usikker login side.
 				</Text>
 
-				<Text ta='center' className='text-white text-lg' mb={16}>
+				<Text ta='center' size='lg' c='white' mb={16}>
 					Her kan du lære om vigtigheden af sikker login praksis og hvordan dine personlige oplysninger beskyttes.
 				</Text>
 
