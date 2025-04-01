@@ -1,37 +1,104 @@
-import { Box, Button, Title, Text, Container, Group, Image } from '@mantine/core';
+import { Box, Title, Text, Container, Group, Image, Paper, Button, SimpleGrid, ThemeIcon, Progress, Card, Badge } from '@mantine/core';
 import { Link } from '@tanstack/react-router';
+import { Shield, WarningOctagon, Brain, ArrowsLeftRight, LockKey, LockKeyOpen } from '@phosphor-icons/react';
 
 function Home() {
+	const learningPaths = [
+		{
+			id: 'explore',
+			title: 'Udforsk Login Sikkerhed',
+			description: 'Lær om sikker og usikker login praksis gennem interaktive eksempler.',
+			icon: <Brain size={24} weight='fill' className='text-blue-400' />,
+			progress: 0,
+			button: { to: '/learn', label: 'Start din rejse', color: 'blue' },
+		},
+		{
+			id: 'safe',
+			title: 'Prøv Sikker Login',
+			description: 'Opdag hvordan en sikker loginside implementerer beskyttelsesmekanismer.',
+			icon: <Shield size={24} weight='fill' className='text-green-400' />,
+			progress: 0,
+			button: { to: '/login-safe', label: 'Prøv sikker login', color: 'green' },
+		},
+		{
+			id: 'unsafe',
+			title: 'Forstå Usikker Login',
+			description: 'Se hvordan en usikker loginside er sårbar over for forskellige angreb.',
+			icon: <WarningOctagon size={24} weight='fill' className='text-red-400' />,
+			progress: 0,
+			button: { to: '/login-unsafe', label: 'Se usikker login', color: 'red' },
+		},
+		{
+			id: 'compare',
+			title: 'Sammenlign Side om Side',
+			description: 'Se forskellen mellem sikker og usikker login i en direkte sammenligning.',
+			icon: <ArrowsLeftRight size={24} weight='fill' className='text-purple-400' />,
+			progress: 0,
+			button: { to: '/compare', label: 'Sammenlign nu', color: 'grape' },
+		},
+	];
+
 	return (
-		<Box className='flex flex-col items-center justify-center bg-gradient-to-r from-zinc-900 to-zinc-800' w='100%' h='100vh' p='lg' c='white'>
-			<Image alt='Hent logo' className='!w-[400px]' src='./enigma.png' />
+		<Box className='min-h-screen' p='lg'>
+			<Container size='xl'>
+				<Box className='text-center py-12'>
+					<Image alt='Enigma logo' className='mx-auto w-60 mb-6' src='./enigma.png' />
 
-			<Container>
-				<Title order={1} ta='center' c='white' size='h1' mb={8}>
-					Velkommen til Enigmas Login Sikkerhed
-				</Title>
+					<Title order={1} className='text-5xl mb-6' c='white'>
+						Velkommen til Enigmas Login Sikkerhed
+					</Title>
 
-				<Text ta='center' size='lg' c='white' mb={8}>
-					Vælg en af de to login sider for at se forskellen på en sikker og en usikker login side.
-				</Text>
+					<Text size='xl' c='white' className='max-w-2xl mx-auto mb-10'>
+						En interaktiv læringsplatform om login sikkerhed, inspireret af historien om Enigma og moderne kryptografi.
+					</Text>
 
-				<Text ta='center' size='lg' c='white' mb={16}>
-					Her kan du lære om vigtigheden af sikker login praksis og hvordan dine personlige oplysninger beskyttes.
-				</Text>
+					<Paper withBorder radius='md' p='xl' className='bg-blue-900/20 mb-12'>
+						<Group justify='center' className='mb-6'>
+							<ThemeIcon size={60} radius={100} color='blue' variant='light'>
+								<LockKey size={30} weight='fill' />
+							</ThemeIcon>
+							<ThemeIcon size={60} radius={100} color='red' variant='light'>
+								<LockKeyOpen size={30} weight='fill' />
+							</ThemeIcon>
+						</Group>
 
-				<Group grow>
-					<Link to='/LoginSafe' className='w-full max-w-xs'>
-						<Button variant='light' color='blue' className='!w-full'>
-							Sikker Login
-						</Button>
-					</Link>
+						<Text size='lg' c='white' className='max-w-3xl mx-auto'>
+							Fra Enigma-maskinens historiske kryptografi til moderne webauthentifikation — lær hvordan sikkerhedsprincipper er udviklet, og hvordan du kan beskytte dig mod almindelige angreb.
+						</Text>
+					</Paper>
 
-					<Link to='/LoginUnsafe' className='w-full max-w-xs'>
-						<Button variant='light' color='red' className='!w-full'>
-							Usikker Login
-						</Button>
-					</Link>
-				</Group>
+					<SimpleGrid cols={2} spacing='lg'>
+						{learningPaths.map((path) => (
+							<Card key={path.id} withBorder p='lg' radius='md' className='bg-zinc-800/60'>
+								<Card.Section className='p-4 border-b border-zinc-700'>
+									<Group justify='space-between'>
+										<Group>
+											{path.icon}
+											<Title order={3} c='white'>
+												{path.title}
+											</Title>
+										</Group>
+										<Badge color={path.button.color} variant='light' size='lg'>
+											Nyt
+										</Badge>
+									</Group>
+								</Card.Section>
+
+								<Text size='md' c='white' className='my-4 h-14'>
+									{path.description}
+								</Text>
+								
+								<Progress value={path.progress} color={path.button.color} size='sm' className='mb-4' />
+
+								<Link to={path.button.to} className='w-full'>
+									<Button fullWidth variant='light' color={path.button.color} size='md'>
+										{path.button.label}
+									</Button>
+								</Link>
+							</Card>
+						))}
+					</SimpleGrid>
+				</Box>
 			</Container>
 		</Box>
 	);
