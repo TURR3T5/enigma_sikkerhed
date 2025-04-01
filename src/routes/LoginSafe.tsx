@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { Box, TextInput, PasswordInput, Button, Title, Text, Container, Paper, Alert, Divider, Badge, SimpleGrid, Accordion, Progress, Group, Card, Tabs, ThemeIcon } from '@mantine/core';
+import { Box, TextInput, PasswordInput, Button, Title, Text, Container, Paper, Alert, Divider, Badge, SimpleGrid, Accordion, Progress, Group, Card, ThemeIcon } from '@mantine/core';
 import { Shield, WarningCircle, Check, LockKey, Eye, EyeSlash, CheckCircle } from '@phosphor-icons/react';
 
 function LoginSafe() {

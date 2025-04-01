@@ -1,6 +1,6 @@
-import { Box, Title, Text, Container, Group, Image, Paper, Button, SimpleGrid, ThemeIcon, Progress, Card, Badge } from '@mantine/core';
+import { Box, Title, Text, Container, Group, Image, Paper, Button, SimpleGrid, Progress, Card, Badge } from '@mantine/core';
 import { Link } from '@tanstack/react-router';
-import { Shield, WarningOctagon, Brain, ArrowsLeftRight, LockKey, LockKeyOpen } from '@phosphor-icons/react';
+import { Shield, WarningOctagon, Brain, ArrowsLeftRight } from '@phosphor-icons/react';
 
 function Home() {
 	const learningPaths = [
@@ -42,27 +42,21 @@ function Home() {
 		<Box className='min-h-screen' p='lg'>
 			<Container size='xl'>
 				<Box className='text-center py-12'>
-					<Image alt='Enigma logo' className='mx-auto w-60 mb-6' src='./enigma.png' />
+					<Image alt='Enigma logo' mx='auto' mb={6} w={800} src='./enigma.png' />
 
-					<Title order={1} className='text-5xl mb-6' c='white'>
+					<Title order={1} className='text-5xl mb-6 text-center' c='white'>
 						Velkommen til Enigmas Login Sikkerhed
 					</Title>
 
-					<Text size='xl' c='white' className='max-w-2xl mx-auto mb-10'>
-						En interaktiv læringsplatform om login sikkerhed, inspireret af historien om Enigma og moderne kryptografi.
-					</Text>
+					<Box w='100%' mb={10}>
+						<Text size='xl' c='white' className='mx-auto mb-10 text-center'>
+							En interaktiv læringsplatform om login sikkerhed, inspireret af historien om Enigma og moderne kryptografi.
+						</Text>
+					</Box>
 
 					<Paper withBorder radius='md' p='xl' className='bg-blue-900/20 mb-12'>
-						<Group justify='center' className='mb-6'>
-							<ThemeIcon size={60} radius={100} color='blue' variant='light'>
-								<LockKey size={30} weight='fill' />
-							</ThemeIcon>
-							<ThemeIcon size={60} radius={100} color='red' variant='light'>
-								<LockKeyOpen size={30} weight='fill' />
-							</ThemeIcon>
-						</Group>
 
-						<Text size='lg' c='white' className='max-w-3xl mx-auto'>
+						<Text size='lg' c='white' className='mx-auto text-center'>
 							Fra Enigma-maskinens historiske kryptografi til moderne webauthentifikation — lær hvordan sikkerhedsprincipper er udviklet, og hvordan du kan beskytte dig mod almindelige angreb.
 						</Text>
 					</Paper>
@@ -87,7 +81,7 @@ function Home() {
 								<Text size='md' c='white' className='my-4 h-14'>
 									{path.description}
 								</Text>
-								
+
 								<Progress value={path.progress} color={path.button.color} size='sm' className='mb-4' />
 
 								<Link to={path.button.to} className='w-full'>

@@ -300,7 +300,7 @@ app.post('/login', (req, res) => {
 					<Divider my='xl' label='Sikkerhedsfunktioner' labelPosition='center' />
 
 					<Box>
-						{securityFeatures.map((feature, index) => (
+						{securityFeatures.map((feature, _index) => (
 							<Paper key={feature.id} withBorder className='bg-purple-900/20 mb-6' p='lg' radius='md'>
 								<Group justify='space-between' mb={16}>
 									<Title order={3}>{feature.title}</Title>

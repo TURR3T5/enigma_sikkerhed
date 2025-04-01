@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
-import { Box, TextInput, PasswordInput, Button, Title, Text, Container, Paper, Group, Alert, Divider, List, Badge, SimpleGrid, Modal, Card, Accordion, ThemeIcon, Tabs, Stepper } from '@mantine/core';
-import { WarningOctagon, Skull, CodeBlock, Check, Lightning, ShieldSlash, Eye, EyeSlash, LockKeyOpen, ArrowRight, Warning } from '@phosphor-icons/react';
+import { Box, TextInput, PasswordInput, Button, Title, Text, Container, Paper, Group, Alert, Divider, List, Badge, SimpleGrid, Modal, Card, Accordion, ThemeIcon, Stepper } from '@mantine/core';
+import { WarningOctagon, Skull, CodeBlock, Check, Lightning, ShieldSlash, Eye, EyeSlash, LockKeyOpen, ArrowRight } from '@phosphor-icons/react';
 
 type User = {
 	username: string;

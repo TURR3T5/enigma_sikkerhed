@@ -1,5 +1,5 @@
 import { Outlet, createRootRoute, Link, useNavigate, useLocation } from '@tanstack/react-router';
-import { Box, AppShell, Group, Button, Title, Text, Divider, Avatar, Badge } from '@mantine/core';
+import { Box, AppShell, Group, Button, Title, Text, Divider, Avatar } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { Shield, WarningOctagon, Book, ArrowsLeftRight, House } from '@phosphor-icons/react';
 
