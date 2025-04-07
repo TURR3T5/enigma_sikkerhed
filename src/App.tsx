@@ -3,7 +3,6 @@ import Home from './routes/Home';
 import LoginSafe from './routes/LoginSafe';
 import LoginUnsafe from './routes/LoginUnsafe';
 import Learn from './routes/Learn';
-import Compare from './routes/Compare';
 import { Route } from './routes/__root';
 
 const rootRoute = Route;
@@ -32,13 +31,7 @@ const learnRoute = createRoute({
 	component: Learn,
 });
 
-const compareRoute = createRoute({
-	getParentRoute: () => rootRoute,
-	path: '/compare',
-	component: Compare,
-});
-
-const routeTree = rootRoute.addChildren([homeRoute, loginSafeRoute, loginUnsafeRoute, learnRoute, compareRoute]);
+const routeTree = rootRoute.addChildren([homeRoute, loginSafeRoute, loginUnsafeRoute, learnRoute]);
 
 const router = createRouter({ routeTree });
 

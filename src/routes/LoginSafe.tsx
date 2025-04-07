@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { Box, TextInput, PasswordInput, Button, Title, Text, Container, Paper, Alert, Divider, Badge, SimpleGrid, Accordion, Progress, Group, Card, ThemeIcon } from '@mantine/core';
-import { Shield, WarningCircle, Check, LockKey, Eye, EyeSlash, CheckCircle } from '@phosphor-icons/react';
+import { Shield, WarningCircle, Check, LockKey, Eye, EyeSlash, CheckCircle, ArrowLeft, ArrowsLeftRight, Trophy } from '@phosphor-icons/react';
+import { useNavigate } from '@tanstack/react-router';
 
 function LoginSafe() {
 	const [username, setUsername] = useState<string>('');
@@ -11,6 +12,9 @@ function LoginSafe() {
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [activeSecurityFeature, setActiveSecurityFeature] = useState<string | null>(null);
 	const [completedLearningSections, setCompletedLearningSections] = useState<string[]>([]);
+	const [showAchievement, setShowAchievement] = useState({ show: false, title: '' });
+
+	const navigate = useNavigate();
 
 	function generateCSRFToken(): string {
 		return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -45,6 +49,10 @@ function LoginSafe() {
 		if (sanitizedUsername === 'admin' && password === 'secure123') {
 			setSuccessMessage('Login lykkedes! Velkommen tilbage.');
 			markSectionCompleted('successful-login');
+			setShowAchievement({
+				show: true,
+				title: 'Sikker Login Gennemført!',
+			});
 		} else {
 			setErrorMessage('Forkert brugernavn eller adgangskode.');
 		}
@@ -52,6 +60,11 @@ function LoginSafe() {
 
 	const highlightSecurityFeature = (feature: string) => {
 		setActiveSecurityFeature(feature);
+		setShowAchievement({
+			show: true,
+			title: `Sikkerhedsfeature: ${securityFeatures.find((f) => f.id === feature)?.title}`,
+		});
+
 		setTimeout(() => {
 			setActiveSecurityFeature(null);
 		}, 3000);
@@ -62,6 +75,34 @@ function LoginSafe() {
 		if (!completedLearningSections.includes(section)) {
 			setCompletedLearningSections([...completedLearningSections, section]);
 		}
+	};
+
+	const AchievementPopup = ({ title, show, onComplete }: { title: string; show: boolean; onComplete: () => void }) => {
+		useState(() => {
+			if (show) {
+				const timer = setTimeout(() => {
+					onComplete();
+				}, 3000);
+
+				return () => clearTimeout(timer);
+			}
+		});
+
+		return show ? (
+			<Paper style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 1000 }} withBorder p='md' className='bg-gradient-to-r from-green-900 to-blue-900'>
+				<Group>
+					<ThemeIcon size='lg' radius='xl' color='green'>
+						<Trophy size={20} weight='fill' />
+					</ThemeIcon>
+					<div>
+						<Text size='xs' c='dimmed'>
+							Sikkerhedsfunktion Opdaget!
+						</Text>
+						<Text fw='bold'>{title}</Text>
+					</div>
+				</Group>
+			</Paper>
+		) : null;
 	};
 
 	const securityFeatures = [
@@ -192,6 +233,16 @@ res.cookie('sessionId', sessionToken, {
 									Log ind
 								</Button>
 							</form>
+
+							<Group mt={24} justify='space-between'>
+								<Button variant='subtle' color='gray' leftSection={<ArrowLeft size={16} />} onClick={() => navigate({ to: '/learn' })}>
+									Tilbage til Læring
+								</Button>
+
+								<Button color='red' rightSection={<ArrowsLeftRight size={16} />} onClick={() => navigate({ to: '/login-unsafe' })}>
+									Prøv Usikker Login
+								</Button>
+							</Group>
 						</Paper>
 
 						<Paper withBorder p='lg' radius='md' className='bg-blue-800/30 text-white'>
@@ -331,6 +382,8 @@ res.cookie('sessionId', sessionToken, {
 					</Box>
 				</SimpleGrid>
 			</Container>
+
+			<AchievementPopup show={showAchievement.show} title={showAchievement.title} onComplete={() => setShowAchievement({ show: false, title: '' })} />
 		</Box>
 	);
 }

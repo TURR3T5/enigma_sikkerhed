@@ -1,16 +1,26 @@
 import { useState } from 'react';
-import { Box, Title, Text, Container, Paper, Tabs, Timeline, Card, Group, ThemeIcon, Badge, List, Button, Progress, SimpleGrid, Accordion, Divider, Image } from '@mantine/core';
-import { Shield, WarningOctagon, Book, LockKey, CodeBlock, CheckCircle, X, CaretRight, Brain, Info, Lightning, ArrowsLeftRight, Check } from '@phosphor-icons/react';
-import { Link } from '@tanstack/react-router';
+import { Box, Title, Text, Container, Paper, Tabs, Timeline, Card, Group, ThemeIcon, Badge, List, Button, Progress, SimpleGrid, Accordion, Divider, Image, Alert } from '@mantine/core';
+import { Shield, WarningOctagon, Book, LockKey, CodeBlock, CheckCircle, X, CaretRight, Brain, Info, Lightning, Check, Medal, Trophy } from '@phosphor-icons/react';
+import { Link, useNavigate } from '@tanstack/react-router';
 
 function Learn() {
 	const [activeTab, setActiveTab] = useState<string | null>('intro');
 	const [completedLessons, setCompletedLessons] = useState<string[]>([]);
 	const [expandedTimeline, setExpandedTimeline] = useState(false);
+	const [isProgressComplete, setIsProgressComplete] = useState(false);
+	const [showQuiz, setShowQuiz] = useState(false);
+	const [quizAnswered, setQuizAnswered] = useState(false);
+	const [showAchievement, setShowAchievement] = useState({ show: false, title: '' });
+
+	const navigate = useNavigate();
 
 	const markLessonCompleted = (lessonId: string) => {
 		if (!completedLessons.includes(lessonId)) {
 			setCompletedLessons([...completedLessons, lessonId]);
+			setShowAchievement({
+				show: true,
+				title: `Afsnit gennemført: ${lessonId === 'intro' ? 'Introduktion' : lessonId === 'history' ? 'Historisk Kontekst' : lessonId === 'attacks' ? 'Angrebstyper' : lessonId === 'best-practices' ? 'Bedste Praksis' : lessonId === 'psychology' ? 'Psykologiske Aspekter' : 'Nyt afsnit'}`,
+			});
 		}
 	};
 
@@ -19,9 +29,97 @@ function Learn() {
 	};
 
 	const calculateProgress = () => {
-		const totalLessons = 5; // Update this based on your total lessons
-		return Math.round((completedLessons.length / totalLessons) * 100);
+		const totalLessons = 5;
+		const progress = Math.round((completedLessons.length / totalLessons) * 100);
+
+		if (progress === 100 && !isProgressComplete) {
+			setIsProgressComplete(true);
+			setShowAchievement({
+				show: true,
+				title: 'Læringsmodul 100% Gennemført!',
+			});
+		}
+
+		return progress;
 	};
+
+	const getNextTab = (currentTab: string | null) => {
+		const tabs = ['intro', 'history', 'attacks', 'best-practices', 'psychology'];
+		const currentIndex = tabs.indexOf(currentTab || 'intro');
+		return tabs[(currentIndex + 1) % tabs.length];
+	};
+
+	const AchievementPopup = ({ title, show, onComplete }: { title: string; show: boolean; onComplete: () => void }) => {
+		useState(() => {
+			if (show) {
+				const timer = setTimeout(() => {
+					onComplete();
+				}, 3000);
+
+				return () => clearTimeout(timer);
+			}
+		});
+
+		return show ? (
+			<Paper style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 1000 }} withBorder p='md' className='bg-gradient-to-r from-yellow-900 to-orange-900'>
+				<Group>
+					<ThemeIcon size='lg' radius='xl' color='yellow'>
+						<Trophy size={20} weight='fill' />
+					</ThemeIcon>
+					<div>
+						<Text size='xs' c='dimmed'>
+							Bedrift Opnået!
+						</Text>
+						<Text fw='bold'>{title}</Text>
+					</div>
+				</Group>
+			</Paper>
+		) : null;
+	};
+
+	const QuizComponent = ({ question, options, correctIndex, lessonId }: { question: string; options: string[]; correctIndex: number; lessonId: string }) => (
+		<Card withBorder className='bg-blue-900/30 mt-4'>
+			<Title order={4} mb={12}>
+				Quiz: Test din viden
+			</Title>
+			<Text mb={16}>{question}</Text>
+
+			<SimpleGrid cols={2} spacing='sm'>
+				{options.map((option, index) => (
+					<Button
+						key={index}
+						variant={quizAnswered ? (index === correctIndex ? 'filled' : 'light') : 'default'}
+						color={quizAnswered ? (index === correctIndex ? 'green' : 'red') : 'blue'}
+						onClick={() => {
+							setQuizAnswered(true);
+							if (index === correctIndex) {
+								markLessonCompleted(lessonId);
+							}
+						}}
+						leftSection={quizAnswered && index === correctIndex ? <Check size={16} /> : null}
+						disabled={quizAnswered}
+					>
+						{option}
+					</Button>
+				))}
+			</SimpleGrid>
+
+			{quizAnswered && (
+				<Group mt={16} justify='flex-end'>
+					<Button
+						color='blue'
+						onClick={() => {
+							setQuizAnswered(false);
+							setShowQuiz(false);
+							setActiveTab(getNextTab(activeTab));
+						}}
+					>
+						Fortsæt til næste emne
+					</Button>
+				</Group>
+			)}
+		</Card>
+	);
 
 	return (
 		<Box p='xl'>
@@ -173,6 +271,14 @@ function Learn() {
 									</SimpleGrid>
 								</Card>
 							</SimpleGrid>
+
+							{!isLessonCompleted('intro') && !showQuiz && (
+								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
+									Tag quizzen for at fortsætte
+								</Button>
+							)}
+
+							{showQuiz && !isLessonCompleted('intro') && <QuizComponent question='Hvad er den største fordel ved at bruge stærk login-sikkerhed?' options={['Det ser professionelt ud', 'Det beskytter brugerdata mod uautoriseret adgang', 'Det øger hjemmesidens hastighed', 'Det reducerer serveromkostningerne']} correctIndex={1} lessonId='intro' />}
 						</Tabs.Panel>
 
 						<Tabs.Panel value='history' pt='xl'>
@@ -292,6 +398,14 @@ function Learn() {
 									</Button>
 								</Card>
 							</SimpleGrid>
+
+							{!isLessonCompleted('history') && !showQuiz && (
+								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
+									Tag quizzen for at fortsætte
+								</Button>
+							)}
+
+							{showQuiz && !isLessonCompleted('history') && <QuizComponent question='Hvilken historisk kryptografisk enhed har påvirket moderne sikkerhedstankegang betydeligt?' options={['Smartphones', 'Enigma-maskinen', 'Håndskrevne breve', 'Fax-maskiner']} correctIndex={1} lessonId='history' />}
 						</Tabs.Panel>
 
 						<Tabs.Panel value='attacks' pt='xl'>
@@ -462,6 +576,14 @@ query: SELECT * FROM users WHERE username='admin' OR 1=1 --' AND password='anyth
 									</Button>
 								</Card>
 							</SimpleGrid>
+
+							{!isLessonCompleted('attacks') && !showQuiz && (
+								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
+									Tag quizzen for at fortsætte
+								</Button>
+							)}
+
+							{showQuiz && !isLessonCompleted('attacks') && <QuizComponent question='Hvad er SQL Injection?' options={['En type anti-virus software', 'Et angreb der manipulerer database-forespørgsler via brugerinput', 'Et værktøj til at teste webside-hastighed', 'Et system til at tilføje data til en database']} correctIndex={1} lessonId='attacks' />}
 						</Tabs.Panel>
 
 						<Tabs.Panel value='best-practices' pt='xl'>
@@ -631,13 +753,25 @@ db.query(query, [username, passwordHash]);`}
 										</SimpleGrid>
 									</Paper>
 
-									<Link to='/compare' className='w-full'>
-										<Button color='grape' fullWidth leftSection={<ArrowsLeftRight size={18} />}>
-											Se Detaljeret Sammenligning
+									<Group justify='space-between'>
+										<Button variant='light' color='green' onClick={() => navigate({ to: '/login-safe' })}>
+											Prøv Sikker Login
 										</Button>
-									</Link>
+
+										<Button variant='light' color='red' onClick={() => navigate({ to: '/login-unsafe' })}>
+											Prøv Usikker Login
+										</Button>
+									</Group>
 								</Card>
 							</SimpleGrid>
+
+							{!isLessonCompleted('best-practices') && !showQuiz && (
+								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
+									Tag quizzen for at fortsætte
+								</Button>
+							)}
+
+							{showQuiz && !isLessonCompleted('best-practices') && <QuizComponent question='Hvad er den sikreste måde at gemme brugeradgangskoder på?' options={['I en tekstfil på serveren', 'I klartekst i databasen', 'Hashet og saltet med en sikker algoritme', 'Base64-encodet']} correctIndex={2} lessonId='best-practices' />}
 						</Tabs.Panel>
 
 						<Tabs.Panel value='psychology' pt='xl'>
@@ -743,10 +877,59 @@ db.query(query, [username, passwordHash]);`}
 									</Button>
 								</Card>
 							</SimpleGrid>
+
+							{!isLessonCompleted('psychology') && !showQuiz && (
+								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
+									Tag quizzen for at fortsætte
+								</Button>
+							)}
+
+							{showQuiz && !isLessonCompleted('psychology') && <QuizComponent question='Hvorfor vælger mange brugere svage adgangskoder selvom de ved det er usikkert?' options={['De har ikke nok teknisk viden', 'De prioriterer bekvemmelighed over sikkerhed', 'De tror ikke deres konti er værdifulde', 'De stoler på at firmaerne beskytter dem']} correctIndex={1} lessonId='psychology' />}
+
+							{completedLessons.includes('psychology') && (
+								<Box mt={16}>
+									<Alert color='green' className='mb-6'>
+										<Group>
+											<Medal size={24} weight='fill' className='text-yellow-400' />
+											<Text fw='bold'>Tillykke! Du har nu lært de grundlæggende principper om login-sikkerhed.</Text>
+										</Group>
+									</Alert>
+
+									<Text mb={16}>Nu er det tid til at se sikkerhedsprincipperne i praksis. Vælg en af mulighederne nedenfor:</Text>
+
+									<SimpleGrid cols={2} spacing='lg'>
+										<Card withBorder className='bg-green-900/20'>
+											<Title order={5} mb={8}>
+												Prøv Sikker Login
+											</Title>
+											<Text size='sm' mb={12}>
+												Se hvordan en sikker loginside implementerer beskyttelse mod forskellige angreb.
+											</Text>
+											<Button color='green' rightSection={<CaretRight size={16} />} onClick={() => navigate({ to: '/login-safe' })} fullWidth>
+												Gå til Sikker Login
+											</Button>
+										</Card>
+
+										<Card withBorder className='bg-red-900/20'>
+											<Title order={5} mb={8}>
+												Prøv Usikker Login
+											</Title>
+											<Text size='sm' mb={12}>
+												Opdag sårbarheder i en usikker loginside og prøv forskellige angreb.
+											</Text>
+											<Button color='red' rightSection={<CaretRight size={16} />} onClick={() => navigate({ to: '/login-unsafe' })} fullWidth>
+												Gå til Usikker Login
+											</Button>
+										</Card>
+									</SimpleGrid>
+								</Box>
+							)}
 						</Tabs.Panel>
 					</Tabs>
 				</Paper>
 			</Container>
+
+			<AchievementPopup show={showAchievement.show} title={showAchievement.title} onComplete={() => setShowAchievement({ show: false, title: '' })} />
 		</Box>
 	);
 }

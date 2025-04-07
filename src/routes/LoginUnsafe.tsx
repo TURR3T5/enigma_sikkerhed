@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { Box, TextInput, PasswordInput, Button, Title, Text, Container, Paper, Group, Alert, Divider, List, Badge, SimpleGrid, Modal, Card, Accordion, ThemeIcon, Stepper } from '@mantine/core';
-import { WarningOctagon, Skull, CodeBlock, Check, Lightning, ShieldSlash, Eye, EyeSlash, LockKeyOpen, ArrowRight } from '@phosphor-icons/react';
+import { WarningOctagon, Skull, CodeBlock, Check, Lightning, ShieldSlash, Eye, EyeSlash, LockKeyOpen, ArrowRight, ArrowLeft, ArrowsLeftRight, Trophy } from '@phosphor-icons/react';
+import { useNavigate } from '@tanstack/react-router';
 
 type User = {
 	username: string;
@@ -19,12 +20,43 @@ function LoginUnsafe() {
 	const [activeAttackStep, setActiveAttackStep] = useState<number>(0);
 	const [_attackProgress, setAttackProgress] = useState<number>(0);
 	const [learnedVulnerabilities, setLearnedVulnerabilities] = useState<string[]>([]);
+	const [showAchievement, setShowAchievement] = useState({ show: false, title: '' });
+
+	const navigate = useNavigate();
 
 	const users: User[] = [
 		{ username: 'admin', password: 'password123' },
 		{ username: 'user', password: '12345' },
 		{ username: 'enigma', password: 'museum' },
 	];
+
+	const AchievementPopup = ({ title, show, onComplete }: { title: string; show: boolean; onComplete: () => void }) => {
+		useState(() => {
+			if (show) {
+				const timer = setTimeout(() => {
+					onComplete();
+				}, 3000);
+
+				return () => clearTimeout(timer);
+			}
+		});
+
+		return show ? (
+			<Paper style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 1000 }} withBorder p='md' className='bg-gradient-to-r from-red-900 to-orange-900'>
+				<Group>
+					<ThemeIcon size='lg' radius='xl' color='red'>
+						<Trophy size={20} weight='fill' />
+					</ThemeIcon>
+					<div>
+						<Text size='xs' c='dimmed'>
+							Sårbarhed Opdaget!
+						</Text>
+						<Text fw='bold'>{title}</Text>
+					</div>
+				</Group>
+			</Paper>
+		) : null;
+	};
 
 	const handleLogin = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -63,6 +95,10 @@ function LoginUnsafe() {
 	const trackVulnerabilityLearned = (vulnerability: string) => {
 		if (!learnedVulnerabilities.includes(vulnerability)) {
 			setLearnedVulnerabilities([...learnedVulnerabilities, vulnerability]);
+			setShowAchievement({
+				show: true,
+				title: `Sårbarhed opdaget: ${vulnerability === 'xss' ? 'Cross-Site Scripting' : vulnerability === 'sql' ? 'SQL Injection' : vulnerability === 'specific-errors' ? 'Informations-lækage' : vulnerability === 'no-csrf' ? 'Manglende CSRF-beskyttelse' : vulnerability === 'no-rate-limit' ? 'Ingen Rate Limiting' : vulnerability === 'plaintext-passwords' ? 'Klartekst adgangskoder' : 'Ny sårbarhed'}`,
+			});
 		}
 	};
 
@@ -593,6 +629,16 @@ const users = [
 									)}
 								</Box>
 							)}
+
+							<Group mt={24} justify='space-between'>
+								<Button variant='subtle' color='gray' leftSection={<ArrowLeft size={16} />} onClick={() => navigate({ to: '/learn' })}>
+									Tilbage til Læring
+								</Button>
+
+								<Button color='green' rightSection={<ArrowsLeftRight size={16} />} onClick={() => navigate({ to: '/login-safe' })}>
+									Prøv Sikker Login
+								</Button>
+							</Group>
 						</Paper>
 
 						<Paper withBorder p='lg' radius='md' className='bg-red-800/30 text-white'>
@@ -687,10 +733,10 @@ const users = [
 
 							<div className='font-mono text-xs bg-red-950 overflow-x-auto p-3 border border-red-500 rounded mb-4'>
 								{`[
-  { username: "admin", password: "password123" },
-  { username: "user", password: "12345" },
-  { username: "enigma", password: "museum" }
-]`}
+														  { username: "admin", password: "password123" },
+														  { username: "user", password: "12345" },
+														  { username: "enigma", password: "museum" }
+														]`}
 							</div>
 
 							<Divider my='md' />
@@ -705,17 +751,17 @@ const users = [
 
 							<div className='font-mono text-xs bg-green-950 overflow-x-auto p-3 border border-green-500 rounded'>
 								{`[
-  { 
-    username: "admin", 
-    passwordHash: "$2a$10$XJpq.zya1Zxebn83nGKVTeQeJa6oMGK76CuUBCxJsCgVuCRXHzgaC",
-    salt: "XJpq.zya1Zxebn83nGKVTe"
-  },
-  { 
-    username: "user", 
-    passwordHash: "$2a$10$dRs7hkPdq91KvN.2eH9EAOJjG2moPcEW8uUBCYNLjEeeTRAFPtIqq",
-    salt: "dRs7hkPdq91KvN.2eH9EA"
-  }
-]`}
+														  { 
+															username: "admin", 
+															passwordHash: "$2a$10$XJpq.zya1Zxebn83nGKVTeQeJa6oMGK76CuUBCxJsCgVuCRXHzgaC",
+															salt: "XJpq.zya1Zxebn83nGKVTe"
+														  },
+														  { 
+															username: "user", 
+															passwordHash: "$2a$10$dRs7hkPdq91KvN.2eH9EAOJjG2moPcEW8uUBCYNLjEeeTRAFPtIqq",
+															salt: "dRs7hkPdq91KvN.2eH9EA"
+														  }
+														]`}
 							</div>
 						</Paper>
 					</Box>
@@ -724,6 +770,8 @@ const users = [
 
 			<XssAttackModal />
 			<SqlInjectionModal />
+
+			<AchievementPopup show={showAchievement.show} title={showAchievement.title} onComplete={() => setShowAchievement({ show: false, title: '' })} />
 		</Box>
 	);
 }
