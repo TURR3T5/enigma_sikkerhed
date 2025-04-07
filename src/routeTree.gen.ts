@@ -15,7 +15,6 @@ import { Route as LoginUnsafeImport } from './routes/LoginUnsafe'
 import { Route as LoginSafeImport } from './routes/LoginSafe'
 import { Route as LearnImport } from './routes/Learn'
 import { Route as HomeImport } from './routes/Home'
-import { Route as CompareImport } from './routes/Compare'
 
 // Create/Update Routes
 
@@ -43,23 +42,10 @@ const HomeRoute = HomeImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const CompareRoute = CompareImport.update({
-  id: '/Compare',
-  path: '/Compare',
-  getParentRoute: () => rootRoute,
-} as any)
-
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/Compare': {
-      id: '/Compare'
-      path: '/Compare'
-      fullPath: '/Compare'
-      preLoaderRoute: typeof CompareImport
-      parentRoute: typeof rootRoute
-    }
     '/Home': {
       id: '/Home'
       path: '/Home'
@@ -94,7 +80,6 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/Compare': typeof CompareRoute
   '/Home': typeof HomeRoute
   '/Learn': typeof LearnRoute
   '/LoginSafe': typeof LoginSafeRoute
@@ -102,7 +87,6 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
-  '/Compare': typeof CompareRoute
   '/Home': typeof HomeRoute
   '/Learn': typeof LearnRoute
   '/LoginSafe': typeof LoginSafeRoute
@@ -111,7 +95,6 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/Compare': typeof CompareRoute
   '/Home': typeof HomeRoute
   '/Learn': typeof LearnRoute
   '/LoginSafe': typeof LoginSafeRoute
@@ -120,21 +103,14 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/Compare' | '/Home' | '/Learn' | '/LoginSafe' | '/LoginUnsafe'
+  fullPaths: '/Home' | '/Learn' | '/LoginSafe' | '/LoginUnsafe'
   fileRoutesByTo: FileRoutesByTo
-  to: '/Compare' | '/Home' | '/Learn' | '/LoginSafe' | '/LoginUnsafe'
-  id:
-    | '__root__'
-    | '/Compare'
-    | '/Home'
-    | '/Learn'
-    | '/LoginSafe'
-    | '/LoginUnsafe'
+  to: '/Home' | '/Learn' | '/LoginSafe' | '/LoginUnsafe'
+  id: '__root__' | '/Home' | '/Learn' | '/LoginSafe' | '/LoginUnsafe'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  CompareRoute: typeof CompareRoute
   HomeRoute: typeof HomeRoute
   LearnRoute: typeof LearnRoute
   LoginSafeRoute: typeof LoginSafeRoute
@@ -142,7 +118,6 @@ export interface RootRouteChildren {
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  CompareRoute: CompareRoute,
   HomeRoute: HomeRoute,
   LearnRoute: LearnRoute,
   LoginSafeRoute: LoginSafeRoute,
@@ -159,15 +134,11 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/Compare",
         "/Home",
         "/Learn",
         "/LoginSafe",
         "/LoginUnsafe"
       ]
-    },
-    "/Compare": {
-      "filePath": "Compare.tsx"
     },
     "/Home": {
       "filePath": "Home.tsx"

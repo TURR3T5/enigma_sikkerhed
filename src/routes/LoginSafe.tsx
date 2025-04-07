@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import { Box, TextInput, PasswordInput, Button, Title, Text, Container, Paper, Alert, Divider, Badge, SimpleGrid, Accordion, Progress, Group, Card, ThemeIcon } from '@mantine/core';
 import { Shield, WarningCircle, Check, LockKey, Eye, EyeSlash, CheckCircle, ArrowLeft, ArrowsLeftRight, Trophy } from '@phosphor-icons/react';
 import { useNavigate } from '@tanstack/react-router';
+import { RestartButton } from '../components/RestartButton';
 
 function LoginSafe() {
 	const [username, setUsername] = useState<string>('');
@@ -382,6 +383,8 @@ res.cookie('sessionId', sessionToken, {
 					</Box>
 				</SimpleGrid>
 			</Container>
+
+			<RestartButton />
 
 			<AchievementPopup show={showAchievement.show} title={showAchievement.title} onComplete={() => setShowAchievement({ show: false, title: '' })} />
 		</Box>

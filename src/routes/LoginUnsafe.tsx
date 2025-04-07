@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import { Box, TextInput, PasswordInput, Button, Title, Text, Container, Paper, Group, Alert, Divider, List, Badge, SimpleGrid, Modal, Card, Accordion, ThemeIcon, Stepper } from '@mantine/core';
 import { WarningOctagon, Skull, CodeBlock, Check, Lightning, ShieldSlash, Eye, EyeSlash, LockKeyOpen, ArrowRight, ArrowLeft, ArrowsLeftRight, Trophy } from '@phosphor-icons/react';
 import { useNavigate } from '@tanstack/react-router';
+import { RestartButton } from '../components/RestartButton';
 
 type User = {
 	username: string;
@@ -770,6 +771,7 @@ const users = [
 
 			<XssAttackModal />
 			<SqlInjectionModal />
+			<RestartButton />
 
 			<AchievementPopup show={showAchievement.show} title={showAchievement.title} onComplete={() => setShowAchievement({ show: false, title: '' })} />
 		</Box>

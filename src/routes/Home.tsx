@@ -1,6 +1,7 @@
 import { Box, Title, Text, Container, Button, Paper, Image } from '@mantine/core';
 import { useNavigate } from '@tanstack/react-router';
 import { CaretRight } from '@phosphor-icons/react';
+import { RestartButton } from '../components/RestartButton';
 
 function Home() {
 	const navigate = useNavigate();

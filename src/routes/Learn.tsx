@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Box, Title, Text, Container, Paper, Tabs, Timeline, Card, Group, ThemeIcon, Badge, List, Button, Progress, SimpleGrid, Accordion, Divider, Image, Alert } from '@mantine/core';
+import { Box, Title, Text, Container, Paper, Tabs, Card, Group, ThemeIcon, Badge, List, Button, Progress, SimpleGrid, Accordion, Divider, Image, Alert } from '@mantine/core';
 import { Shield, WarningOctagon, Book, LockKey, CodeBlock, CheckCircle, X, CaretRight, Brain, Info, Lightning, Check, Medal, Trophy } from '@phosphor-icons/react';
 import { Link, useNavigate } from '@tanstack/react-router';
+import { RestartButton } from '../components/RestartButton';
 
 function Learn() {
 	const [activeTab, setActiveTab] = useState<string | null>('intro');
 	const [completedLessons, setCompletedLessons] = useState<string[]>([]);
-	const [expandedTimeline, setExpandedTimeline] = useState(false);
 	const [isProgressComplete, setIsProgressComplete] = useState(false);
 	const [showQuiz, setShowQuiz] = useState(false);
 	const [quizAnswered, setQuizAnswered] = useState(false);
@@ -164,50 +164,17 @@ function Learn() {
 							<SimpleGrid cols={2} spacing='lg'>
 								<Card withBorder radius='md' className='bg-blue-900/20'>
 									<Title order={3} mb={16}>
-										Introduktion til Login Sikkerhed
+										Login Sikkerhed Basis
 									</Title>
 
-									<Text mb={16}>Login-systemer er den primære indgang til digitale tjenester og beskytter følsomme oplysninger. De er også et af de mest almindelige mål for hackere og cyberkriminelle.</Text>
+									<Image src='./enigma.png' alt='Enigma maskine' height={150} fit='contain' className='mb-4' />
 
-									<Text mb={16}>I denne læringsmodul vil du opdage:</Text>
+									<Text mb={16}>Login-systemer er indgangen til digitale tjenester og beskytter følsomme oplysninger. De er et af de mest almindelige mål for hackere.</Text>
 
-									<List spacing='sm' mb={20}>
-										<List.Item
-											icon={
-												<ThemeIcon color='blue' size='sm' radius='xl'>
-													<CaretRight size={14} weight='bold' />
-												</ThemeIcon>
-											}
-										>
-											Historien bag kryptografi og autentifikation
-										</List.Item>
-										<List.Item
-											icon={
-												<ThemeIcon color='blue' size='sm' radius='xl'>
-													<CaretRight size={14} weight='bold' />
-												</ThemeIcon>
-											}
-										>
-											Almindelige sikkerhedssårbarheder i login-systemer
-										</List.Item>
-										<List.Item
-											icon={
-												<ThemeIcon color='blue' size='sm' radius='xl'>
-													<CaretRight size={14} weight='bold' />
-												</ThemeIcon>
-											}
-										>
-											Bedste praksis for at beskytte dine brugere
-										</List.Item>
-										<List.Item
-											icon={
-												<ThemeIcon color='blue' size='sm' radius='xl'>
-													<CaretRight size={14} weight='bold' />
-												</ThemeIcon>
-											}
-										>
-											Psykologien bag brugeradfærd og sikkerhed
-										</List.Item>
+									<List spacing='sm' mb={16}>
+										<List.Item icon={<CaretRight size={14} />}>Kryptografi og autentifikation</List.Item>
+										<List.Item icon={<CaretRight size={14} />}>Almindelige sårbarheder</List.Item>
+										<List.Item icon={<CaretRight size={14} />}>Bedste sikkerhedspraksis</List.Item>
 									</List>
 
 									<Button color='blue' onClick={() => markLessonCompleted('intro')} fullWidth>
@@ -223,8 +190,6 @@ function Learn() {
 								</Card>
 
 								<Card withBorder radius='md' className='bg-blue-900/20'>
-									<Image src='./enigma.png' alt='Enigma maskine' height={200} fit='contain' className='mb-4' />
-
 									<Title order={3} mb={12}>
 										Læringsveje
 									</Title>
@@ -256,19 +221,9 @@ function Learn() {
 										</List.Item>
 									</List>
 
-									<SimpleGrid cols={2} spacing='sm'>
-										<Link to='/login-safe' className='w-full'>
-											<Button variant='outline' color='green' fullWidth leftSection={<Shield size={16} />}>
-												Sikker Login
-											</Button>
-										</Link>
-
-										<Link to='/login-unsafe' className='w-full'>
-											<Button variant='outline' color='red' fullWidth leftSection={<WarningOctagon size={16} />}>
-												Usikker Login
-											</Button>
-										</Link>
-									</SimpleGrid>
+									<Text size='sm' mb={16}>
+										Uanset hvilken tilgang du vælger, anbefales det at tage quizzerne for at teste din forståelse og opnå bedrifter undervejs.
+									</Text>
 								</Card>
 							</SimpleGrid>
 
@@ -282,72 +237,42 @@ function Learn() {
 						</Tabs.Panel>
 
 						<Tabs.Panel value='history' pt='xl'>
-							<SimpleGrid cols={3} spacing='lg'>
-								<Card withBorder radius='md' className='bg-blue-900/20'>
-									<Title order={3} mb={16}>
-										Kryptografiens Historie
-									</Title>
-
-									<Text mb={16}>Kryptografi og sikker kommunikation har rødder, der går tusindvis af år tilbage. Fra antikke cæsar-ciffre til moderne hashing-algoritmer, har mennesker altid søgt at beskytte følsomme oplysninger.</Text>
-
-									<Timeline active={expandedTimeline ? 5 : 1} bulletSize={24} lineWidth={2}>
-										<Timeline.Item bullet={<Book size={12} />} title='Antikken'>
-											<Text size='sm' color='dimmed'>
-												Cæsar-ciffer og simple substitutionscifre
-											</Text>
-										</Timeline.Item>
-										<Timeline.Item bullet={<Book size={12} />} title='1500-1800-tallet'>
-											<Text size='sm' color='dimmed'>
-												Mekaniske krypteringsenheder udvikles
-											</Text>
-										</Timeline.Item>
-										<Timeline.Item bullet={<Book size={12} />} title='2. Verdenskrig'>
-											<Text size='sm' color='dimmed'>
-												Enigma-maskinen og Alan Turings kodebrydningsarbejde
-											</Text>
-										</Timeline.Item>
-										<Timeline.Item bullet={<Book size={12} />} title="1970'erne">
-											<Text size='sm' color='dimmed'>
-												Udvikling af DES og begyndelsen på moderne kryptografi
-											</Text>
-										</Timeline.Item>
-										<Timeline.Item bullet={<Book size={12} />} title='I dag'>
-											<Text size='sm' color='dimmed'>
-												Avancerede hashing-algoritmer, SSL/TLS, og kvanteresistente algoritmer
-											</Text>
-										</Timeline.Item>
-									</Timeline>
-
-									<Button variant='subtle' color='blue' onClick={() => setExpandedTimeline(!expandedTimeline)} mt={8} fullWidth>
-										{expandedTimeline ? 'Vis mindre' : 'Vis mere'}
-									</Button>
-								</Card>
-
+							<SimpleGrid cols={2} spacing='lg'>
 								<Card withBorder radius='md' className='bg-blue-900/20'>
 									<Title order={3} mb={16}>
 										Enigma-maskinen
 									</Title>
 
-									<Image src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/EnigmaMachineLabeled.jpg/300px-EnigmaMachineLabeled.jpg' alt='Enigma maskine diagram' height={200} className='mb-4' />
+									<Image src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/EnigmaMachineLabeled.jpg/300px-EnigmaMachineLabeled.jpg' alt='Enigma maskine' mah={240} fit='contain' className='mb-4' />
 
-									<Text mb={16}>Enigma-maskinen var en avanceret krypteringsanordning brugt af Tyskland under 2. Verdenskrig. Den brugte roterende mekaniske hjul til at kryptere meddelelser, hvilket skabte det der dengang blev anset som ubrydelige koder.</Text>
-
-									<Text mb={16}>Enigmas styrker og svagheder illustrerer kerneprincipperne for moderne sikkerhed:</Text>
+									<Text mb={16}>Enigma-maskinen var en avanceret krypteringsanordning brugt af Tyskland under 2. Verdenskrig. Den skabte koder der dengang blev anset som ubrydelige.</Text>
 
 									<List
 										spacing='sm'
-										mb={20}
+										mb={16}
 										icon={
 											<ThemeIcon color='blue' size='sm' radius='xl'>
 												<Info size={14} />
 											</ThemeIcon>
 										}
 									>
-										<List.Item>Kryptografisk kompleksitet gør angreb vanskelige</List.Item>
-										<List.Item>Mønstergenkendelse kan afsløre svagheder</List.Item>
-										<List.Item>Mennesker er ofte det svageste led i sikkerhedskæden</List.Item>
-										<List.Item>Operationelle fejl kan kompromittere selv stærke systemer</List.Item>
+										<List.Item>Brugte roterende hjul til at ændre bogstaver i beskeder</List.Item>
+										<List.Item>Hver dag brugtes nye indstillinger til at ændre koden</List.Item>
+										<List.Item>Alan Turing og holdet ved Bletchley Park brød koden</List.Item>
 									</List>
+
+									{!isLessonCompleted('history') && (
+										<Button color='blue' onClick={() => markLessonCompleted('history')} fullWidth>
+											{isLessonCompleted('history') ? (
+												<>
+													<CheckCircle size={18} className='mr-2' weight='fill' />
+													Gennemført
+												</>
+											) : (
+												'Marker som gennemført'
+											)}
+										</Button>
+									)}
 								</Card>
 
 								<Card withBorder radius='md' className='bg-blue-900/20'>
@@ -355,57 +280,40 @@ function Learn() {
 										Fra Enigma til Moderne Login
 									</Title>
 
-									<Text mb={16}>Der er bemærkelsesværdige paralleller mellem Enigma-kryptering og moderne login-sikkerhed:</Text>
+									<Text mb={16}>Der er tydelige paralleller mellem Enigma og moderne login-sikkerhed:</Text>
 
-									<Accordion variant='contained' mb={20}>
-										<Accordion.Item value='complexity'>
-											<Accordion.Control>
-												<Text fw='bold'>Kompleksitet</Text>
-											</Accordion.Control>
-											<Accordion.Panel>
-												<Text size='sm'>Enigma brugte roterende hjul og stikkere for kompleksitet. Moderne login-systemer bruger saltet hashing, flere autentifikationsfaktorer og kryptografiske nøgler.</Text>
-											</Accordion.Panel>
-										</Accordion.Item>
+									<SimpleGrid cols={1} spacing='md' mb={16}>
+										<Paper withBorder p='md' radius='md' className='bg-blue-900/30'>
+											<Title order={5} mb={8}>
+												Kompleksitet
+											</Title>
+											<Text size='sm'>Enigma brugte roterende hjul. Moderne login bruger hashing og kryptering.</Text>
+										</Paper>
 
-										<Accordion.Item value='weaknesses'>
-											<Accordion.Control>
-												<Text fw='bold'>Svagheder</Text>
-											</Accordion.Control>
-											<Accordion.Panel>
-												<Text size='sm'>Enigma havde svagheder i både design og anvendelse. Moderne login-systemer kan kompromitteres af dårlig implementation, svage adgangskoder, eller social engineering.</Text>
-											</Accordion.Panel>
-										</Accordion.Item>
+										<Paper withBorder p='md' radius='md' className='bg-blue-900/30'>
+											<Title order={5} mb={8}>
+												Svagheder
+											</Title>
+											<Text size='sm'>Enigma var sårbar over for mønstre. Moderne login er sårbar over for brugeradfærd og dårlig kode.</Text>
+										</Paper>
 
-										<Accordion.Item value='evolution'>
-											<Accordion.Control>
-												<Text fw='bold'>Evolution</Text>
-											</Accordion.Control>
-											<Accordion.Panel>
-												<Text size='sm'>Ligesom Enigma blev forbedret over tid for at lukke sårbarheder, udvikler moderne login-systemer sig konstant for at modstå nye angrebsteknikker og -teknologier.</Text>
-											</Accordion.Panel>
-										</Accordion.Item>
-									</Accordion>
+										<Paper withBorder p='md' radius='md' className='bg-blue-900/30'>
+											<Title order={5} mb={8}>
+												Mennesket som svaghed
+											</Title>
+											<Text size='sm'>Både Enigma og moderne sikkerhedssystemer har mennesker som det svageste led i kæden.</Text>
+										</Paper>
+									</SimpleGrid>
 
-									<Button color='blue' onClick={() => markLessonCompleted('history')} fullWidth>
-										{isLessonCompleted('history') ? (
-											<>
-												<CheckCircle size={18} className='mr-2' weight='fill' />
-												Gennemført
-											</>
-										) : (
-											'Marker som gennemført'
-										)}
-									</Button>
+									{!isLessonCompleted('history') && !showQuiz && (
+										<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth>
+											Tag quizzen for at fortsætte
+										</Button>
+									)}
+
+									{showQuiz && !isLessonCompleted('history') && <QuizComponent question='Hvilken historisk kryptografisk enhed har påvirket moderne sikkerhedstankegang?' options={['Smartphones', 'Enigma-maskinen', 'Håndskrevne breve', 'Fax-maskiner']} correctIndex={1} lessonId='history' />}
 								</Card>
 							</SimpleGrid>
-
-							{!isLessonCompleted('history') && !showQuiz && (
-								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
-									Tag quizzen for at fortsætte
-								</Button>
-							)}
-
-							{showQuiz && !isLessonCompleted('history') && <QuizComponent question='Hvilken historisk kryptografisk enhed har påvirket moderne sikkerhedstankegang betydeligt?' options={['Smartphones', 'Enigma-maskinen', 'Håndskrevne breve', 'Fax-maskiner']} correctIndex={1} lessonId='history' />}
 						</Tabs.Panel>
 
 						<Tabs.Panel value='attacks' pt='xl'>
@@ -928,6 +836,8 @@ db.query(query, [username, passwordHash]);`}
 					</Tabs>
 				</Paper>
 			</Container>
+
+			<RestartButton />
 
 			<AchievementPopup show={showAchievement.show} title={showAchievement.title} onComplete={() => setShowAchievement({ show: false, title: '' })} />
 		</Box>
