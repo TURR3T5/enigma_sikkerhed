@@ -100,7 +100,7 @@ export interface FileRoutesById {
   '/LoginSafe': typeof LoginSafeRoute
   '/LoginUnsafe': typeof LoginUnsafeRoute
 }
-
+  
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/Home' | '/Learn' | '/LoginSafe' | '/LoginUnsafe'

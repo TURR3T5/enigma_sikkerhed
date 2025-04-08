@@ -1,7 +1,6 @@
 import { Box, Title, Text, Container, Button, Paper, Image } from '@mantine/core';
 import { useNavigate } from '@tanstack/react-router';
 import { CaretRight } from '@phosphor-icons/react';
-import { RestartButton } from '../components/RestartButton';
 
 function Home() {
 	const navigate = useNavigate();
@@ -21,7 +20,7 @@ function Home() {
 							Udforsk hvordan login-systemer kan være enten sikre eller sårbare over for hackere. Lær om moderne sikkerhedsteknikker, der har rødder i Enigma-maskinens historie.
 						</Text>
 
-						<Button size='lg' color='blue' rightSection={<CaretRight size={20} weight='bold' />} onClick={() => navigate({ to: '/learn' })} className='animate-pulse'>
+						<Button onClick={() => navigate({ to: '/learn' })} size='lg' color='blue' rightSection={<CaretRight size={20} weight='bold' />} className='animate-pulse'>
 							Start Oplevelsen
 						</Button>
 					</Paper>

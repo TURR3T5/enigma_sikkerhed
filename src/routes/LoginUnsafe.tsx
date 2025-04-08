@@ -62,14 +62,12 @@ function LoginUnsafe() {
 	const handleLogin = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		// If the XSS attack was triggered, show the visual simulation
 		if (username.includes('<script') || username.includes('<img') || username.includes('onerror')) {
 			setShowXssModal(true);
 			trackVulnerabilityLearned('xss');
 			return;
 		}
 
-		// For SQL Injection demo - automatic success for "admin' --"
 		if (username.includes("admin'") && username.includes('--')) {
 			setLoginMessage(`Login successful for admin`);
 			trackVulnerabilityLearned('sql');
