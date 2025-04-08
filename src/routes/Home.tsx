@@ -7,26 +7,26 @@ function Home() {
 
 	return (
 		<Box className='min-h-screen flex items-center justify-center' p='lg'>
-			<Container size='xl'>
-				<Box className='text-center py-12'>
-					<Image alt='Enigma logo' mx='auto' mb={6} w={400} src='./enigma.png' />
+			<Container size='md'>
+				<Box className='text-center py-16'>
+					<Image alt='Enigma logo' mx='auto' mb={16} w={300} src='./enigma.png' />
 
-					<Title order={1} className='text-4xl mb-6 text-center' c='white'>
+					<Title order={1} className='text-3xl text-center' c='white' mb={24}>
 						Velkommen til Enigmas Login Sikkerhed
 					</Title>
 
-					<Paper withBorder radius='md' p='xl' className='bg-blue-900/20 mb-8'>
-						<Text size='lg' c='white' className='mx-auto text-center mb-8'>
+					<Paper withBorder radius='md' p='md' mb={12} className='bg-blue-900/30'>
+						<Text size='md' c='white' mb={16} className='mx-auto text-center'>
 							Udforsk hvordan login-systemer kan være enten sikre eller sårbare over for hackere. Lær om moderne sikkerhedsteknikker, der har rødder i Enigma-maskinens historie.
 						</Text>
 
-						<Button onClick={() => navigate({ to: '/learn' })} size='lg' color='blue' rightSection={<CaretRight size={20} weight='bold' />} className='animate-pulse'>
+						<Button onClick={() => navigate({ to: '/learn' })} size='md' color='blue' rightSection={<CaretRight size={20} weight='bold' />} className='animate-pulse'>
 							Start Oplevelsen
 						</Button>
 					</Paper>
 
-					<Text size='sm' c='dimmed' className='mt-8'>
-						Tryk på skærmen for at begynde din rejse gennem login-sikkerhed
+					<Text size='xs' c='dimmed'>
+						Tryk på knappen for at begynde din rejse gennem login-sikkerhed
 					</Text>
 				</Box>
 			</Container>

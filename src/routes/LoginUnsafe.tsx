@@ -460,7 +460,7 @@ const users = [
 								<Text size='sm'>Denne side demonstrerer bevidst usikre login-metoder. Brug aldrig disse teknikker i rigtige systemer!</Text>
 							</Alert>
 
-							<Text size='md' className='mb-4'>
+							<Text size='md' mb={12}>
 								Denne usikre loginside er sårbar over for forskellige angreb. Du kan logge ind med følgende legitimationsoplysninger:
 							</Text>
 

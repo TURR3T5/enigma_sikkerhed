@@ -192,7 +192,7 @@ res.cookie('sessionId', sessionToken, {
 								</Badge>
 							</Group>
 
-							<Text size='md' className='mb-4'>
+							<Text size='md' mb={12}>
 								Denne side implementerer de bedste praksisser for login-sikkerhed. Prøv at bruge følgende legitimationsoplysninger for at teste:
 							</Text>
 

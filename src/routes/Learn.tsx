@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Box, Title, Text, Container, Paper, Tabs, Card, Group, ThemeIcon, Badge, List, Button, Progress, SimpleGrid, Accordion, Divider, Image, Alert } from '@mantine/core';
-import { Shield, WarningOctagon, Book, LockKey, CodeBlock, CheckCircle, X, CaretRight, Brain, Info, Lightning, Check, Medal, Trophy, ArrowLeft, ArrowRight } from '@phosphor-icons/react';
+import { Box, Title, Text, Container, Paper, Tabs, Card, Group, ThemeIcon, Badge, List, Button, Progress, SimpleGrid, Accordion, Image, Alert } from '@mantine/core';
+import { Shield, WarningOctagon, Book, LockKey, CodeBlock, X, CaretRight, Brain, Info, Lightning, Check, Medal, Trophy, ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { RestartButton } from '../components/RestartButton';
 
@@ -70,7 +70,7 @@ function Learn() {
 	};
 
 	const NavigationButtons = () => (
-		<Box pos='fixed' top={20} right={20} style={{ zIndex: 1000 }}> 
+		<Box pos='fixed' top={20} right={20} style={{ zIndex: 1000 }}>
 			<Group>
 				<Button variant='light' color='gray' leftSection={<ArrowLeft size={16} />} onClick={() => navigate({ to: '/' })}>
 					Gå tilbage
@@ -181,24 +181,34 @@ function Learn() {
 					<Tabs value={activeTab} onChange={setActiveTab} className='mb-6' color='blue'>
 						<Tabs.List grow>
 							<Tabs.Tab value='intro' leftSection={<Info size={16} />}>
-								Introduktion
-								{isLessonCompleted('intro') && <Check size={12} className='ml-1' />}
+								<Group>
+									Introduktion
+									{isLessonCompleted('intro') && <Check size={12} />}
+								</Group>
 							</Tabs.Tab>
 							<Tabs.Tab value='history' leftSection={<Book size={16} />}>
-								Historisk Kontekst
-								{isLessonCompleted('history') && <Check size={12} className='ml-1' />}
+								<Group>
+									Historisk Kontekst
+									{isLessonCompleted('history') && <Check size={12} />}
+								</Group>
 							</Tabs.Tab>
 							<Tabs.Tab value='attacks' leftSection={<Lightning size={16} />}>
-								Angrebstyper
-								{isLessonCompleted('attacks') && <Check size={12} className='ml-1' />}
+								<Group>
+									Angrebstyper
+									{isLessonCompleted('attacks') && <Check size={12} />}
+								</Group>
 							</Tabs.Tab>
 							<Tabs.Tab value='best-practices' leftSection={<Shield size={16} />}>
-								Bedste Praksis
-								{isLessonCompleted('best-practices') && <Check size={12} className='ml-1' />}
+								<Group>
+									Bedste Praksis
+									{isLessonCompleted('best-practices') && <Check size={12} />}
+								</Group>
 							</Tabs.Tab>
 							<Tabs.Tab value='psychology' leftSection={<Brain size={16} />}>
-								Psykologi
-								{isLessonCompleted('psychology') && <Check size={12} className='ml-1' />}
+								<Group>
+									Psykologi
+									{isLessonCompleted('psychology') && <Check size={12} />}
+								</Group>
 							</Tabs.Tab>
 						</Tabs.List>
 
