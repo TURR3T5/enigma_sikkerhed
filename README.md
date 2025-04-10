@@ -22,3 +22,7 @@ På macOS kan du også installere Node.js via Homebrew:
 Når pakkerne er installeret, kan du køre projektet direkte fra den medfølgende dist-mappe:
 
 Browseren burde automatisk åbne projektet. Hvis ikke, kan du åbne din browser og gå til adressen som vises i terminalen (typisk http://localhost:5173).
+
+### Hvis det ikke lykkedes!
+
+Hvis det sker at node ikke virker, eller den slår fejl så gå ind på enigma.capdev.dk, da projektet også ligger der.
